@@ -4833,6 +4833,10 @@ enum EACSFunctions
 	ACSF_Ceil,
 	ACSF_ScriptCall,
 
+		// Eternity's
+	ACSF_GetLineX = 300,
+	ACSF_GetLineY,
+
 
 	// OpenGL stuff
 	ACSF_SetSectorGlow = 400,
@@ -6679,11 +6683,24 @@ doplaysound:			if (funcIndex == ACSF_PlayActorSound)
 		case ACSF_ScriptCall:
 			return ScriptCall(argCount, args);
 
+		case ACSF_GetLineX:
+		case ACSF_GetLineY:
+		{
+			FLineIdIterator it(args[0]);
+			int lineno = it.Next();
+			if (lineno < 0) return 0;
+			DVector2 delta = level.lines[lineno].Delta();
+			double result = delta[funcIndex - ACSF_GetLineX] * ACSToDouble(args[1]);
+			if (args[2])
+			{
+				DVector2 normal = DVector2(delta.Y, -delta.X).Unit();
+				result += normal[funcIndex - ACSF_GetLineX] * ACSToDouble(args[2]);
+			}
+			return DoubleToACS(result);
+		}
 		default:
 			break;
 	}
-
-
 	return 0;
 }
 
