@@ -33,6 +33,7 @@
 #include "r_utility.h"
 #include "p_blockmap.h"
 #include "g_levellocals.h"
+#include "v_text.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -1529,19 +1530,23 @@ static void SpawnPolyobj (int index, int tag, int type)
 		{
 			if (po->Sidedefs.Size() > 0)
 			{
-				I_Error ("SpawnPolyobj: Polyobj %d already spawned.\n", tag);
+				Printf (TEXTCOLOR_RED "SpawnPolyobj: Polyobj %d already spawned.\n", tag);
+				return;
 			}
-			sd->linedef->special = 0;
-			sd->linedef->args[0] = 0;
-			IterFindPolySides(&polyobjs[index], sd);
-			po->MirrorNum = sd->linedef->args[1];
-			po->crush = (type != SMT_PolySpawn) ? 3 : 0;
-			po->bHurtOnTouch = (type == SMT_PolySpawnHurt);
-			po->tag = tag;
-			po->seqType = sd->linedef->args[2];
-			if (po->seqType < 0 || po->seqType > 63)
+			else
 			{
-				po->seqType = 0;
+				sd->linedef->special = 0;
+				sd->linedef->args[0] = 0;
+				IterFindPolySides(&polyobjs[index], sd);
+				po->MirrorNum = sd->linedef->args[1];
+				po->crush = (type != SMT_PolySpawn) ? 3 : 0;
+				po->bHurtOnTouch = (type == SMT_PolySpawnHurt);
+				po->tag = tag;
+				po->seqType = sd->linedef->args[2];
+				if (po->seqType < 0 || po->seqType > 63)
+				{
+					po->seqType = 0;
+				}
 			}
 			break;
 		}
@@ -1563,9 +1568,13 @@ static void SpawnPolyobj (int index, int tag, int type)
 			{
 				if (!level.sides[i].linedef->args[1])
 				{
-					I_Error("SpawnPolyobj: Explicit line missing order number in poly %d, linedef %d.\n", tag, level.sides[i].linedef->Index());
+					Printf(TEXTCOLOR_RED "SpawnPolyobj: Explicit line missing order number in poly %d, linedef %d.\n", tag, level.sides[i].linedef->Index());
+					return;
 				}
-				po->Sidedefs.Push (&level.sides[i]);
+				else
+				{
+					po->Sidedefs.Push(&level.sides[i]);
+				}
 			}
 		}
 		qsort(&po->Sidedefs[0], po->Sidedefs.Size(), sizeof(po->Sidedefs[0]), posicmp);
@@ -1578,7 +1587,10 @@ static void SpawnPolyobj (int index, int tag, int type)
 			po->MirrorNum = po->Sidedefs[0]->linedef->args[2];
 		}
 		else
-			I_Error ("SpawnPolyobj: Poly %d does not exist\n", tag);
+		{
+			Printf(TEXTCOLOR_RED "SpawnPolyobj: Poly %d does not exist\n", tag);
+			return;
+		}
 	}
 
 	validcount++;	
@@ -1641,11 +1653,13 @@ static void TranslateToStartSpot (int tag, const DVector2 &origin)
 	}
 	if (po == NULL)
 	{ // didn't match the tag with a polyobj tag
-		I_Error("TranslateToStartSpot: Unable to match polyobj tag: %d\n", tag);
+		Printf(TEXTCOLOR_RED "TranslateToStartSpot: Unable to match polyobj tag: %d\n", tag);
+		return;
 	}
 	if (po->Sidedefs.Size() == 0)
 	{
-		I_Error ("TranslateToStartSpot: Anchor point located without a StartSpot point: %d\n", tag);
+		Printf(TEXTCOLOR_RED "TranslateToStartSpot: Anchor point located without a StartSpot point: %d\n", tag);
+		return;
 	}
 	po->OriginalPts.Resize(po->Sidedefs.Size());
 	po->PrevPts.Resize(po->Sidedefs.Size());
@@ -1731,8 +1745,7 @@ void PO_Init (void)
 	{
 		if (polyobjs[polyIndex].OriginalPts.Size() == 0)
 		{
-			I_Error ("PO_Init: StartSpot located without an Anchor point: %d\n",
-				polyobjs[polyIndex].tag);
+			Printf (TEXTCOLOR_RED "PO_Init: StartSpot located without an Anchor point: %d\n", polyobjs[polyIndex].tag);
 		}
 	}
 	InitBlockMap();
