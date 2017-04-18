@@ -132,7 +132,7 @@ DEFINE_ACTION_FUNCTION(FOptionValues, GetText)
 }
 
 
-static void DeinitMenus()
+void DeinitMenus()
 {
 	{
 		FOptionMap::Iterator it(OptionValues);
