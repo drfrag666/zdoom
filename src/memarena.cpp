@@ -238,7 +238,7 @@ FMemArena::Block *FMemArena::AddBlock(size_t size)
 
 void FMemArena::Block::Reset()
 {
-	Avail = RoundPointer(this + sizeof(*this));
+	Avail = RoundPointer(reinterpret_cast<char*>(this) + sizeof(*this));
 }
 
 //==========================================================================
