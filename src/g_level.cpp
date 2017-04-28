@@ -179,11 +179,14 @@ CCMD (map)
 	}
 	if (argv.argc() > 1)
 	{
+		const char *mapname = argv[1];
+		if (!strcmp(mapname, "*")) mapname = level.MapName.GetChars();
+
 		try
 		{
-			if (!P_CheckMapData(argv[1]))
+			if (!P_CheckMapData(mapname))
 			{
-				Printf ("No map %s\n", argv[1]);
+				Printf ("No map %s\n", mapname);
 			}
 			else
 			{
@@ -197,7 +200,7 @@ CCMD (map)
 					deathmatch = true;
 					multiplayernext = true;
 				}
-				G_DeferedInitNew (argv[1]);
+				G_DeferedInitNew (mapname);
 			}
 		}
 		catch(CRecoverableError &error)
@@ -226,11 +229,14 @@ CCMD(recordmap)
 	}
 	if (argv.argc() > 2)
 	{
+		const char *mapname = argv[2];
+		if (!strcmp(mapname, "*")) mapname = level.MapName.GetChars();
+
 		try
 		{
-			if (!P_CheckMapData(argv[2]))
+			if (!P_CheckMapData(mapname))
 			{
-				Printf("No map %s\n", argv[2]);
+				Printf("No map %s\n", mapname);
 			}
 			else
 			{
@@ -244,7 +250,7 @@ CCMD(recordmap)
 					deathmatch = true;
 					multiplayernext = true;
 				}
-				G_DeferedInitNew(argv[2]);
+				G_DeferedInitNew(mapname);
 				gameaction = ga_recordgame;
 				newdemoname = argv[1];
 				newdemomap = argv[2];
