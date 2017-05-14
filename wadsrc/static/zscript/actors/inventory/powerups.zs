@@ -86,7 +86,7 @@ class Powerup : Inventory
 		{
 			Destroy ();
 		}
-		if (EffectTics > 0 && --EffectTics == 0)
+		if (EffectTics == 0 || (EffectTics > 0 && --EffectTics == 0))
 		{
 			Destroy ();
 		}
