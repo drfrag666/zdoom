@@ -2299,7 +2299,7 @@ void P_FallingDamage (AActor *actor)
 		P_NoiseAlert (actor, actor, true);
 		if (damage == 1000000 && (actor->player->cheats & (CF_GODMODE | CF_BUDDHA)))
 		{
-			damage = 999;
+			damage = TELEFRAG_DAMAGE - 1;
 		}
 	}
 	P_DamageMobj (actor, NULL, NULL, damage, NAME_Falling);
