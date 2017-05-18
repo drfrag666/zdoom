@@ -109,7 +109,7 @@ class ListMenu : Menu
 
 			for(int i = mDesc.mSelectedItem + 1; i < mDesc.mItems.Size(); i++)
 			{
-				if (mDesc.mItems[i].CheckHotkey(ch))
+				if (mDesc.mitems[i].Selectable() && mDesc.mItems[i].CheckHotkey(ch))
 				{
 					mDesc.mSelectedItem = i;
 					MenuSound("menu/cursor");
@@ -118,7 +118,7 @@ class ListMenu : Menu
 			}
 			for(int i = 0; i < mDesc.mSelectedItem; i++)
 			{
-				if (mDesc.mItems[i].CheckHotkey(ch))
+				if (mDesc.mitems[i].Selectable() && mDesc.mItems[i].CheckHotkey(ch))
 				{
 					mDesc.mSelectedItem = i;
 					MenuSound("menu/cursor");
