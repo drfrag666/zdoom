@@ -258,7 +258,7 @@ class Inventory : Actor native
 			if (copy.bInitEffectFailed)
 			{
 				if (copy != self) copy.Destroy();
-				else bInitEffectFailed;
+				else bInitEffectFailed = false;
 				return false;
 			}
 			// Handle owner-changing powerups
