@@ -85,6 +85,7 @@ enum
 	CP_SETSECTORSPECIAL,
 	CP_SETWALLYSCALE,
 	CP_SETWALLTEXTURE,
+	CP_SETTHINGXY,
 	CP_SETTHINGZ,
 	CP_SETTAG,
 	CP_SETTHINGFLAGS,
@@ -351,6 +352,17 @@ void ParseCompatibility()
 					TexNames.Push(texName);
 				}
 				CompatParams.Push(texIndex);
+			}
+			else if (sc.Compare("setthingxy"))
+			{
+				if (flags.ExtCommandIndex == ~0u) flags.ExtCommandIndex = CompatParams.Size();
+				CompatParams.Push(CP_SETTHINGXY);
+				sc.MustGetNumber();
+				CompatParams.Push(sc.Number);
+				sc.MustGetFloat();
+				CompatParams.Push(int(sc.Float*256));
+				sc.MustGetFloat();
+				CompatParams.Push(int(sc.Float*256));
 			}
 			else if (sc.Compare("setthingz"))
 			{
@@ -633,6 +645,17 @@ void SetCompatibilityParams()
 						}
 					}
 					i += 5;
+					break;
+				}
+				case CP_SETTHINGXY:
+				{
+					// When this is called, the things haven't been spawned yet so we can alter the position inside the MapThings array.
+					if ((unsigned)CompatParams[i+1] < MapThingsConverted.Size())
+					{
+						MapThingsConverted[CompatParams[i+1]].pos.X = CompatParams[i+2]/256.;
+						MapThingsConverted[CompatParams[i+1]].pos.Y = CompatParams[i+3]/256.;
+					}
+					i += 4;
 					break;
 				}
 				case CP_SETTHINGZ:
