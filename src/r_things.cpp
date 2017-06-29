@@ -112,6 +112,20 @@ extern float MaskedScaleY;
 #define BASEXCENTER		(160)
 #define BASEYCENTER 	(100)
 
+double sprite_distance_cull = 1e16;
+
+CUSTOM_CVAR(Float, r_spritedistancecull, 0.0, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
+{
+	if (r_spritedistancecull > 0.0)
+	{
+		sprite_distance_cull = r_spritedistancecull * r_spritedistancecull;
+	}
+	else
+	{
+		sprite_distance_cull = 1e16;
+	}
+}
+
 //
 // Sprite rotation 0 is facing the viewer,
 //	rotation 1 is one angle turn CLOCKWISE around the axis.
@@ -754,6 +768,10 @@ void R_ProjectSprite (AActor *thing, int fakeside, F3DFloor *fakefloor, F3DFloor
 	// [ZZ] Or less definitely not visible (hue)
 	// [ZZ] 10.01.2016: don't try to clip stuff inside a skybox against the current portal.
 	if (!CurrentPortalInSkybox && CurrentPortal && !!P_PointOnLineSidePrecise(thing->Pos(), CurrentPortal->dst))
+		return;
+	
+	double distanceSquared = (thing->Pos() - ViewPos).LengthSquared();
+	if (distanceSquared > sprite_distance_cull)
 		return;
 
 	// [RH] Interpolate the sprite's position to make it look smooth
