@@ -6586,7 +6586,7 @@ bool P_CheckMissileSpawn (AActor* th, double maxdist)
 			th->tics = 1;
 	}
 
-	DVector3 newpos = th->Pos();
+	DVector3 newpos = { 0,0,0 };
 
 	if (maxdist > 0)
 	{
@@ -6603,6 +6603,9 @@ bool P_CheckMissileSpawn (AActor* th, double maxdist)
 		while (advance.XY().LengthSquared() >= maxsquared);
 		newpos += advance;
 	}
+
+	newpos = th->Vec3Offset(newpos);
+	th->SetXYZ(newpos);
 
 	FCheckPosition tm(!!(th->flags2 & MF2_RIP));
 
