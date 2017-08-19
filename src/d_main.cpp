@@ -2293,6 +2293,8 @@ void D_DoomMain (void)
 		}
 	}
 
+	if (!batchrun) Printf(PRINT_LOG, "%s version %s\n", GAMENAME, GetVersionString());
+
 	D_DoomInit();
 
 	// [RH] Make sure zdoom.pk3 is always loaded,
