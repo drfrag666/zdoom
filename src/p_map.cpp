@@ -125,6 +125,7 @@ DEFINE_FIELD_X(FCheckPosition, FCheckPosition, ceilingline);
 DEFINE_FIELD_X(FCheckPosition, FCheckPosition, stepthing);
 DEFINE_FIELD_X(FCheckPosition, FCheckPosition, DoRipping);
 DEFINE_FIELD_X(FCheckPosition, FCheckPosition, portalstep);
+DEFINE_FIELD_X(FCheckPosition, FCheckPosition, portalgroup);
 DEFINE_FIELD_X(FCheckPosition, FCheckPosition, PushTime);
 
 //==========================================================================
@@ -252,6 +253,7 @@ static bool PIT_FindFloorCeiling(FMultiBlockLinesIterator &mit, FMultiBlockLines
 		}
 	}
 
+	// If we are stepping through a portal the line's opening must be checked, regardless of the NOFLOOR flag
 	if (!(flags & FFCF_NOFLOOR))
 	{
 		if (open.bottom > tmf.floorz)
@@ -869,6 +871,7 @@ bool PIT_CheckLine(FMultiBlockLinesIterator &mit, FMultiBlockLinesIterator::Chec
 				tm.floorpic = cres.line->sidedef[0]->GetTexture(side_t::mid);
 				tm.floorterrain = 0;
 				tm.portalstep = true;
+				tm.portalgroup = cres.line->frontsector->GetOppositePortalGroup(sector_t::ceiling);
 				return true;
 			}
 		}
@@ -963,6 +966,7 @@ bool PIT_CheckLine(FMultiBlockLinesIterator &mit, FMultiBlockLinesIterator::Chec
 			{
 				// Actor is stepping through a portal.
 				tm.portalstep = true;
+				tm.portalgroup = tm.thing->Sector->GetOppositePortalGroup(sector_t::ceiling);
 				return true;
 			}
 		}
@@ -1015,7 +1019,8 @@ bool PIT_CheckLine(FMultiBlockLinesIterator &mit, FMultiBlockLinesIterator::Chec
 		}
 	}
 
-	if (!(cres.portalflags & FFCF_NOFLOOR))
+	// If we are stepping through a portal the line's opening must be checked, regardless of the NOFLOOR flag
+	if (!(cres.portalflags & FFCF_NOFLOOR) || (tm.portalstep && open.bottomsec->PortalGroup == tm.portalgroup))
 	{
 		if (open.bottom > tm.floorz)
 		{
