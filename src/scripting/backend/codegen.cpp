@@ -199,7 +199,7 @@ FxLocalVariableDeclaration *FCompileContext::FindLocalVariable(FName name)
 
 static PStruct *FindStructType(FName name, FCompileContext &ctx)
 {
-	auto sym = ctx.Class->Symbols.FindSymbol(name, true);
+	auto sym = ctx.Class != nullptr? ctx.Class->Symbols.FindSymbol(name, true) : nullptr;
 	if (sym == nullptr) sym = ctx.CurGlobals->Symbols.FindSymbol(name, true);
 	if (sym && sym->IsKindOf(RUNTIME_CLASS(PSymbolType)))
 	{
