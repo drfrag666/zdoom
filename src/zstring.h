@@ -127,7 +127,7 @@ enum ELumpNum
 class FString
 {
 public:
-	FString () : Chars(&NullString.Nothing[0]) { NullString.RefCount++; }
+	FString () { ResetToNull(); }
 
 	// Copy constructors
 	FString (const FString &other) { AttachToOther (other); }
@@ -317,6 +317,12 @@ public:
 protected:
 	const FStringData *Data() const { return (FStringData *)Chars - 1; }
 	FStringData *Data() { return (FStringData *)Chars - 1; }
+
+	void ResetToNull()
+	{
+		NullString.RefCount++;
+		Chars = &NullString.Nothing[0];
+	}
 
 	void AttachToOther (const FString &other);
 	void AllocBuffer (size_t len);
