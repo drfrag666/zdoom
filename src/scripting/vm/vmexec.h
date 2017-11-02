@@ -873,6 +873,11 @@ begin:
 		{
 			ThrowAbortException(X_ARRAY_OUT_OF_BOUNDS, "Max.index = %u, current index = %u\n", BC, reg.d[a]);
 		}
+		else if (reg.d[a] < 0)
+		{
+			ThrowAbortException(X_ARRAY_OUT_OF_BOUNDS, "Negative current index = %i\n", reg.d[a]);
+			return 0;
+		}
 		NEXTOP;
 
 	OP(BOUND_K):
@@ -881,6 +886,11 @@ begin:
 		{
 			ThrowAbortException(X_ARRAY_OUT_OF_BOUNDS, "Max.index = %u, current index = %u\n", konstd[BC], reg.d[a]);
 		}
+		else if (reg.d[a] < 0)
+		{
+			ThrowAbortException(X_ARRAY_OUT_OF_BOUNDS, "Negative current index = %i\n", reg.d[a]);
+			return 0;
+		}
 		NEXTOP;
 
 	OP(BOUND_R):
@@ -888,6 +898,11 @@ begin:
 		if (reg.d[a] >= reg.d[B])
 		{
 			ThrowAbortException(X_ARRAY_OUT_OF_BOUNDS, "Max.index = %u, current index = %u\n", reg.d[B], reg.d[a]);
+		}
+		else if (reg.d[a] < 0)
+		{
+			ThrowAbortException(X_ARRAY_OUT_OF_BOUNDS, "Negative current index = %i\n", reg.d[a]);
+			return 0;
 		}
 		NEXTOP;
 
