@@ -2291,6 +2291,11 @@ bool D3DTex::Update()
 	assert(Box->Owner->Tex != NULL);
 	assert(GameTex != NULL);
 
+	if (Box->Owner->Tex == NULL)
+	{
+		return false;
+	}
+
 	if (FAILED(Box->Owner->Tex->GetLevelDesc(0, &desc)))
 	{
 		return false;
