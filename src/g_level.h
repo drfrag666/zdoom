@@ -236,7 +236,7 @@ struct FSpecialAction
 {
 	FName Type;					// this is initialized before the actors...
 	uint8_t Action;
-	int Args[5];				// must allow 16 bit tags for 666 & 667!
+	int Args[5];
 };
 
 class DScroller;
@@ -290,6 +290,11 @@ struct FExitText
 	FString mText;
 	FString mMusic;
 	FString mBackdrop;
+
+	FExitText(int def = 0, int order = -1, const FString &text = "", const FString &backdrop = "", const FString &music = "")
+		: mDefined(int16_t(def)), mOrder(int16_t(order)), mText(text), mMusic(music), mBackdrop(backdrop)
+	{
+	}
 };
 
 struct level_info_t
@@ -599,6 +604,9 @@ struct FEpisode
 };
 
 extern TArray<FEpisode> AllEpisodes;
+
+int ParseUMapInfo(int lumpnum);
+void CommitUMapinfo(level_info_t *defaultinfo);
 
 
 #endif //__G_LEVEL_H__
