@@ -1233,6 +1233,8 @@ void ACSStringPool::ReadStrings(FSerializer &file, const char *key)
 			}
 		}
 	}
+
+	FindFirstFreeEntry(FirstFreeEntry);
 }
 
 //============================================================================
