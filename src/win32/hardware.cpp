@@ -52,6 +52,7 @@
 EXTERN_CVAR (Bool, ticker)
 EXTERN_CVAR (Bool, fullscreen)
 EXTERN_CVAR (Float, vid_winscale)
+EXTERN_CVAR (Bool, win_borderless)
 
 CVAR(Int, win_x, -1, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
 CVAR(Int, win_y, -1, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
@@ -313,11 +314,30 @@ void I_RestoreWindowedPos ()
 	}
 	MoveWindow (Window, winx, winy, winw, winh, TRUE);
 
+	if (win_borderless && !Args->CheckParm("-0"))
+	{
+		LONG lStyle = GetWindowLong(Window, GWL_STYLE);
+		lStyle &= ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU);
+		SetWindowLong(Window, GWL_STYLE, lStyle);
+		SetWindowPos(Window, HWND_TOP, 0, 0, scrwidth, scrheight, 0);
+	}
 	if (win_maximized && !Args->CheckParm("-0"))
 		ShowWindow(Window, SW_MAXIMIZE);
 }
 
 extern int NewWidth, NewHeight, NewBits, DisplayBits;
+
+CUSTOM_CVAR(Bool, win_borderless, false, CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_NOINITCALL)
+{
+	// Just reinit the window. Saves a lot of trouble.
+	if (!fullscreen)
+	{
+		NewWidth = screen->VideoWidth;
+		NewHeight = screen->VideoHeight;
+		NewBits = DisplayBits;
+		setmodeneeded = true;
+	}
+}
 
 CUSTOM_CVAR (Bool, fullscreen, false, CVAR_ARCHIVE|CVAR_GLOBALCONFIG|CVAR_NOINITCALL)
 {
