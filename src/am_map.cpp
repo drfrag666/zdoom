@@ -93,6 +93,20 @@ CVAR (Bool,  am_showkeys,			true,		CVAR_ARCHIVE);
 CVAR (Int,   am_showtriggerlines,	0,			CVAR_ARCHIVE);
 CVAR (Int,   am_showthingsprites,		0,		CVAR_ARCHIVE);
 
+CUSTOM_CVAR (Int, am_emptyspacemargin, 0, CVAR_ARCHIVE)
+{
+	if (self < 0)
+	{
+		self = 0;
+	}
+	else if (self > 50)
+	{
+		self = 50;
+	}
+
+	AM_NewResolution();
+}
+
 //=============================================================================
 //
 // Automap colors
@@ -1058,8 +1072,9 @@ static void AM_findMinMaxBoundaries ()
 
 static void AM_calcMinMaxMtoF()
 {
-	double a = SCREENWIDTH / max_w;
-	double b = gST_Y / max_h;
+	const double safe_frame = 1.0 - am_emptyspacemargin / 100.0;
+	double a = safe_frame * (SCREENWIDTH / max_w);
+	double b = safe_frame * (gST_Y / max_h);
 
 	min_scale_mtof = a < b ? a : b;
 	max_scale_mtof = SCREENHEIGHT / (2*PLAYERRADIUS);
