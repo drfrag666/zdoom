@@ -306,6 +306,16 @@ void AActor::UnlinkFromWorld (FLinkContext *ctx)
 		}
 		BlockNode = NULL;
 	}
+	ClearRenderSectorList();
+	ClearRenderLineList();
+}
+
+DEFINE_ACTION_FUNCTION(AActor, UnlinkFromWorld)
+{
+	PARAM_SELF_PROLOGUE(AActor);
+	PARAM_POINTER_DEF(ctx, FLinkContext);
+	self->UnlinkFromWorld(ctx); // fixme
+	return 0;
 }
 
 
@@ -392,15 +402,6 @@ bool AActor::FixMapthingPos()
 	}
 	return success;
 }
-
-DEFINE_ACTION_FUNCTION(AActor, UnlinkFromWorld)
-{
-	PARAM_SELF_PROLOGUE(AActor);
-	PARAM_POINTER_DEF(ctx, FLinkContext);
-	self->UnlinkFromWorld(ctx); // fixme
-	return 0;
-}
-
 
 //==========================================================================
 //
