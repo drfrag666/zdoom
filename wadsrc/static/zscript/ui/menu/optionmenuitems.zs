@@ -121,9 +121,12 @@ class OptionMenuItemSubmenu : OptionMenuItem
 
 class OptionMenuItemCommand : OptionMenuItemSubmenu
 {
+	private String ccmd;	// do not allow access to this from the outside.
+	
 	OptionMenuItemCommand Init(String label, Name command)
 	{
 		Super.Init(label, command);
+		ccmd = command;
 		return self;
 	}
 
@@ -141,7 +144,7 @@ class OptionMenuItemCommand : OptionMenuItemSubmenu
 			if (m.GetItem(mAction) != self) return false;
 		}
 		Menu.MenuSound("menu/choose");
-		DoCommand(mAction);
+		DoCommand(ccmd);
 		return true;
 	}
 
