@@ -1039,7 +1039,15 @@ struct side_t
 		double yScale;
 		FTextureID texture;
 		TObjPtr<DInterpolation*> interpolation;
-		//int Light;
+
+		void InitFrom(const part &other)
+		{
+			if (texture.isNull()) texture = other.texture;
+			if (0.0 == xOffset) xOffset = other.xOffset;
+			if (0.0 == yOffset) yOffset = other.yOffset;
+			if (1.0 == xScale && 0.0 != other.xScale) xScale = other.xScale;
+			if (1.0 == yScale && 0.0 != other.yScale) yScale = other.yScale;
+		}
 	};
 
 	sector_t*	sector;			// Sector the SideDef is facing.
