@@ -196,7 +196,8 @@ void DWaitingCommand::Serialize(FSerializer &arc)
 {
 	Super::Serialize (arc);
 	arc("command", Command)
-		("ticsleft", TicsLeft);
+		("ticsleft", TicsLeft)
+		("unsafe", IsUnsafe);
 }
 
 DWaitingCommand::DWaitingCommand ()
