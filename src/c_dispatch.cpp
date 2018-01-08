@@ -64,7 +64,7 @@ class DWaitingCommand : public DThinker
 {
 	DECLARE_CLASS (DWaitingCommand, DThinker)
 public:
-	DWaitingCommand (const char *cmd, int tics);
+	DWaitingCommand (const char *cmd, int tics, bool unsafe);
 	~DWaitingCommand ();
 	void Serialize(FSerializer &arc);
 	void Tick ();
@@ -74,6 +74,7 @@ private:
 
 	char *Command;
 	int TicsLeft;
+	bool IsUnsafe;
 };
 
 class DStoredCommand : public DThinker
@@ -202,12 +203,14 @@ DWaitingCommand::DWaitingCommand ()
 {
 	Command = NULL;
 	TicsLeft = 1;
+	IsUnsafe = false;
 }
 
-DWaitingCommand::DWaitingCommand (const char *cmd, int tics)
+DWaitingCommand::DWaitingCommand (const char *cmd, int tics, bool unsafe)
 {
 	Command = copystring (cmd);
 	TicsLeft = tics+1;
+	IsUnsafe = unsafe;
 }
 
 DWaitingCommand::~DWaitingCommand ()
@@ -222,7 +225,10 @@ void DWaitingCommand::Tick ()
 {
 	if (--TicsLeft == 0)
 	{
+		const bool wasUnsafe = UnsafeExecutionContext;
+		UnsafeExecutionContext = IsUnsafe;
 		AddCommandString (Command);
+		UnsafeExecutionContext = wasUnsafe;
 		Destroy ();
 	}
 }
@@ -738,7 +744,7 @@ void AddCommandString (char *cmd, int keynum)
 						  // Note that deferred commands lose track of which key
 						  // (if any) they were pressed from.
 							*brkpt = ';';
-							new DWaitingCommand (brkpt, tics);
+							new DWaitingCommand (brkpt, tics, UnsafeExecutionContext);
 						}
 						return;
 					}
