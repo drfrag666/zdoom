@@ -60,6 +60,8 @@ class InterpolationPoint : Actor
 		Next = null;
 	}
 
+	override void Tick () {}		// Nodes do no thinking
+
 	void FormChain ()
 	{
 		let me = self;
