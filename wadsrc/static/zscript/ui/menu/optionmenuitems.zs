@@ -122,15 +122,17 @@ class OptionMenuItemSubmenu : OptionMenuItem
 class OptionMenuItemCommand : OptionMenuItemSubmenu
 {
 	private String ccmd;	// do not allow access to this from the outside.
+	private bool mUnsafe;
 	
 	OptionMenuItemCommand Init(String label, Name command)
 	{
 		Super.Init(label, command);
 		ccmd = command;
+		mUnsafe = true;
 		return self;
 	}
 
-	private native static void DoCommand(String cmd);	// This is very intentionally limited to this menu item to prevent abuse.
+	private native static void DoCommand(String cmd, bool unsafe);	// This is very intentionally limited to this menu item to prevent abuse.
 
 	override bool Activate()
 	{
@@ -144,7 +146,7 @@ class OptionMenuItemCommand : OptionMenuItemSubmenu
 			if (m.GetItem(mAction) != self) return false;
 		}
 		Menu.MenuSound("menu/choose");
-		DoCommand(ccmd);
+		DoCommand(ccmd, mUnsafe);
 		return true;
 	}
 
