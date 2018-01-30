@@ -1280,7 +1280,7 @@ errorout:
 	return false;
 }
 
-CCMD(clearnodecache)
+UNSAFE_CCMD(clearnodecache)
 {
 	TArray<FFileList> list;
 	FString path = M_GetCachePath(false);
