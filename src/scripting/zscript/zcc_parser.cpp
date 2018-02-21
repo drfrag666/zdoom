@@ -265,6 +265,7 @@ static void ParseSingleFile(FScanner *pSC, const char *filename, int lump, void 
 
 	while (sc.GetToken())
 	{
+		value.Largest = 0;
 		value.SourceLoc = sc.GetMessageLine();
 		switch (sc.TokenType)
 		{
