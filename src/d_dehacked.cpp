@@ -562,6 +562,8 @@ static void stripwhite (char *str)
 
 static char *igets (void)
 {
+	assert(PatchPt != nullptr);
+
 	char *line;
 
 	if (*PatchPt == '\0' || PatchPt >= PatchFile + PatchSize )
@@ -2536,7 +2538,7 @@ static bool DoDehPatch()
 		}
 
 		PatchPt = strchr (PatchFile, '\n');
-		while ((cont = GetLine()) == 1)
+		while (PatchPt != nullptr && (cont = GetLine()) == 1)
 		{
 				 CHECKKEY ("Doom version", dversion)
 			else CHECKKEY ("Patch format", pversion)
