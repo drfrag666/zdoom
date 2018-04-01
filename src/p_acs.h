@@ -131,7 +131,7 @@ private:
 	{
 		FString Str;
 		unsigned int Hash;
-		unsigned int Next;
+		unsigned int Next = FREE_ENTRY;
 		bool Mark;
 		TArray<int> Locks;
 
