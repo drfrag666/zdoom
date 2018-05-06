@@ -14,6 +14,7 @@
 #include "c_console.h"
 #include "c_cvars.h"
 #include "i_system.h"
+#include "c_dispatch.h"
 #include "dikeys.h"
 #include "templates.h"
 #include "s_sound.h"
@@ -166,6 +167,7 @@ static void I_CheckGUICapture ()
 		{
 			memset (DownState, 0, sizeof(DownState));
 		}
+		ResetButtonStates();
 	}
 }
 
