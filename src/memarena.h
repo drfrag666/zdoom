@@ -53,6 +53,7 @@ protected:
 
 	Block *AddBlock(size_t size);
 	void FreeBlockChain(Block *&top);
+	void *iAlloc(size_t size);
 
 	Block *TopBlock;
 	Block *FreeBlocks;
