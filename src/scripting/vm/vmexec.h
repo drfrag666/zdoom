@@ -643,6 +643,11 @@ begin:
 		ASSERTA(a); ASSERTA(B);
 		{
 			auto o = (DObject*)reg.a[B];
+			if (o == nullptr)
+			{
+				ThrowAbortException(X_READ_NIL, nullptr);
+				return 0;
+			}
 			auto p = o->GetClass();
 			assert(C < p->Virtuals.Size());
 			reg.a[a] = p->Virtuals[C];
@@ -651,7 +656,13 @@ begin:
 	OP(SCOPE):
 		{
 			ASSERTA(a); ASSERTKA(C);
-			FScopeBarrier::ValidateCall(((DObject*)reg.a[a])->GetClass(), (VMFunction*)konsta[C].v, B - 1);
+			auto o = (DObject*)reg.a[a];
+			if (o == nullptr)
+			{
+				ThrowAbortException(X_READ_NIL, nullptr);
+				return 0;
+			}
+			FScopeBarrier::ValidateCall(o->GetClass(), (VMFunction*)konsta[C].v, B - 1);
 		}
 		NEXTOP;
 
