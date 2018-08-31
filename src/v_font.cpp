@@ -2037,7 +2037,14 @@ FSpecialFont::FSpecialFont (const char *name, int first, int count, FTexture **l
 
 	FixXMoves();
 
-	if (!noTranslate) LoadTranslations();
+	if (noTranslate)
+	{
+		ActiveColors = 0;
+	}
+	else
+	{
+		LoadTranslations();
+	}
 
 	delete[] charlumps;
 }
