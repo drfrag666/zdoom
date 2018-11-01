@@ -138,7 +138,7 @@ public:
 	BYTE bComplex:1;		// Will be used to mark extended MultipatchTextures that have to be
 							// fully composited before subjected to any kind of postprocessing instead of
 							// doing it per patch.
-	BYTE bMultiPatch:1;		// This is a multipatch texture (we really could use real type info for textures...)
+	BYTE bMultiPatch:2;		// This is a multipatch texture (we really could use real type info for textures...)
 	BYTE bKeepAround:1;		// This texture was used as part of a multi-patch texture. Do not free it.
 
 	WORD Rotations;
