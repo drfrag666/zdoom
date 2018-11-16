@@ -1,4 +1,4 @@
-﻿// Emacs style mode select	 -*- C++ -*- 
+// Emacs style mode select	 -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
 // $Id:$
@@ -490,8 +490,8 @@ void AActor::Serialize(FSerializer &arc)
 		A("woundhealth", WoundHealth)
 		A("rdfactor", RadiusDamageFactor)
 		A("selfdamagefactor", SelfDamageFactor)
-		A("stealthalpha", StealthAlpha);
-
+		A("stealthalpha", StealthAlpha)
+		A("friction", Friction);
 }
 
 #undef A
