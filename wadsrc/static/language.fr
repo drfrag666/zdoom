@@ -17,8 +17,8 @@ TXT_YES = "Oui";
 TXT_NO = "Non";
 
 // QuitDoom1 messages
-QUITMSG1 = "ne partez pas,Il ya encore\ndes démons a griller!";
-QUITMSG2 = "fichons le camp ,ça dégenere\nen bain de sang!";
+QUITMSG1 = "ne partez pas,Il ya encore\ndes dÃ©mons a griller!";
+QUITMSG2 = "fichons le camp ,Ã§a dÃ©genere\nen bain de sang!";
 QUITMSG3 = "Je ne quitterai pas si j'etait vous.\nos est bien pire.";
 QUITMSG4 = "Vous essayez de dire que vous aimez dos\nmieux que moi ,pas vrai?";
 QUITMSG5 = "Ne partez pas encore-il y a \nun demon dans le coin!";
@@ -269,7 +269,7 @@ THUSTR_20 = "level 20: traitement central";
 THUSTR_21 = "level 21: le centre administratif";
 THUSTR_22 = "level 22: l'habitat";
 THUSTR_23 = "level 23: le projet de mine lunaire";
-THUSTR_24 = "level 24: la carrière";
+THUSTR_24 = "level 24: la carriÃ¨re";
 THUSTR_25 = "level 25: l'antre des barons";
 THUSTR_26 = "level 26: ballistyx";
 THUSTR_27 = "level 27: le mont souffrance";
@@ -672,8 +672,8 @@ TXT_TIMELIMIT = "limite de temps atteinte.";
 
 // Spree messages
 SPREEKILLSELF = "%o etait en folie meurtriere avant que %g ne (le/la) frag!";
-SPREEOVER = "La folie meurtrière %o a ete termine par %k";
-SPREE5 = "%k est dans une folie meurtrière!";
+SPREEOVER = "La folie meurtriÃ¨re %o a ete termine par %k";
+SPREE5 = "%k est dans une folie meurtriÃ¨re!";
 SPREE10 = "%k se dechaine!";
 SPREE15 = "%k domine!";
 SPREE20 = "%k est inarretable!";
@@ -991,9 +991,9 @@ HHUSTR_E5M9 = "L ECHEVAUX DE D'SPARIL";
 
 // Keys
 
-TXT_GOTBLUEKEY = "CLÉ BLEUE";
-TXT_GOTYELLOWKEY = "CLÉ JAUNE";
-TXT_GOTGREENKEY = "CLÉ VERTE";
+TXT_GOTBLUEKEY = "CLÃ‰ BLEUE";
+TXT_GOTYELLOWKEY = "CLÃ‰ JAUNE";
+TXT_GOTGREENKEY = "CLÃ‰ VERTE";
 
 // Artifacts
 
@@ -1112,14 +1112,14 @@ TXT_ARTIPUZZGEMBIG = "COEUR DE D'SPARIL";
 TXT_ARTIPUZZGEMRED = "PLANETE DE RUBI";
 TXT_ARTIPUZZGEMGREEN1 = "PLANETE D'EMERAUDE";
 TXT_ARTIPUZZGEMGREEN2 = "PLANETE D'EMERAUDE";
-TXT_ARTIPUZZGEMBLUE1 = "PLANETE DE SAPPHIRE";
-TXT_ARTIPUZZGEMBLUE2 = "PLANETE DE SAPPHIRE";
-TXT_ARTIPUZZBOOK1 = "CODEX DES DEMON";
-TXT_ARTIPUZZBOOK2 = "LIVRE OBSCURE";
-TXT_ARTIPUZZSKULL2 = "MASQUE DE FLAMES";
-TXT_ARTIPUZZFWEAPON = "LE SCEAU DE GLAIVE";
-TXT_ARTIPUZZCWEAPON = "LA SAINTE RELIQUE";
-TXT_ARTIPUZZMWEAPON = "SIGIL DU MAGE";
+TXT_ARTIPUZZGEMBLUE1 = "PLANETE DE SAPHIR";
+TXT_ARTIPUZZGEMBLUE2 = "PLANETE DE SAPHIR";
+TXT_ARTIPUZZBOOK1 = "CODEX DEMONIAQUE";
+TXT_ARTIPUZZBOOK2 = "LIBER OSCURA";
+TXT_ARTIPUZZSKULL2 = "MASQUE DE FLAMMES";
+TXT_ARTIPUZZFWEAPON = "SCEAU DU GLAIVE";
+TXT_ARTIPUZZCWEAPON = "RELIQUE SACREE";
+TXT_ARTIPUZZMWEAPON = "SCEAU DU MAGE";
 TXT_ARTIPUZZGEAR = "ROUAGE D'HORLOGE";
 TXT_USEPUZZLEFAILED = "VOUS NE POUVEZ PAS UTILISE CECI ICI";
 
@@ -1154,7 +1154,7 @@ TXT_NEED_PASSCARD_DOOR = "Vous avez besoin de la cle carte passe pour ouvrir cet
 TXT_NEED_IDCARD = "Vous avez besoin d'une carte ID.";
 TXT_NEED_PRISONKEY = "Vous n'avez pas la cle de la prison.";
 TXT_NEED_HANDPRINT = "Votre main ne s'imprime pas sur le dossier.";
-TXT_NEED_GOLDKEY = "Vous avez besoin d'une clé d'or.";
+TXT_NEED_GOLDKEY = "Vous avez besoin d'une clÃ© d'or.";
 TXT_NEED_IDBADGE = "Vous avez besoin d'un badge ID.";
 TXT_NEED_IDBADGE_DOOR = "Vous avez besoin d'un badge ID pour ouvrir cette porte.";
 TXT_NEED_SILVERKEY = "Vous avez besoin de la cle d'argent.";
