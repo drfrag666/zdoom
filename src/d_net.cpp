@@ -2498,10 +2498,10 @@ void Net_DoCommand (int type, BYTE **stream, int player)
 
 	case DEM_RUNNAMEDSCRIPT:
 		{
-			char *sname = ReadString(stream);
+			s = ReadString(stream);
 			int argn = ReadByte(stream);
 
-			RunScript(stream, players[player].mo, -FName(sname), argn & 127, (argn & 128) ? ACS_ALWAYS : 0);
+			RunScript(stream, players[player].mo, -FName(s), argn & 127, (argn & 128) ? ACS_ALWAYS : 0);
 		}
 		break;
 
@@ -2568,9 +2568,9 @@ void Net_DoCommand (int type, BYTE **stream, int player)
 
 	case DEM_KILLCLASSCHEAT:
 		{
-			char *classname = ReadString (stream);
+			s = ReadString (stream);
 			int killcount = 0;
-			PClassActor *cls = PClass::FindActor(classname);
+			PClassActor *cls = PClass::FindActor(s);
 
 			if (cls != NULL)
 			{
@@ -2580,20 +2580,20 @@ void Net_DoCommand (int type, BYTE **stream, int player)
 				{
 					killcount += KillAll(cls_rep);
 				}
-				Printf ("Killed %d monsters of type %s.\n",killcount, classname);
+				Printf ("Killed %d monsters of type %s.\n",killcount, s);
 			}
 			else
 			{
-				Printf ("%s is not an actor class.\n", classname);
+				Printf ("%s is not an actor class.\n", s);
 			}
 
 		}
 		break;
 	case DEM_REMOVE:
 	{
-		char *classname = ReadString(stream);
+		s = ReadString(stream);
 		int removecount = 0;
-		PClassActor *cls = PClass::FindActor(classname);
+		PClassActor *cls = PClass::FindActor(s);
 		if (cls != NULL && cls->IsKindOf(RUNTIME_CLASS(PClassActor)))
 		{
 			removecount = RemoveClass(cls);
@@ -2602,11 +2602,11 @@ void Net_DoCommand (int type, BYTE **stream, int player)
 			{
 				removecount += RemoveClass(cls_rep);
 			}
-			Printf("Removed %d actors of type %s.\n", removecount, classname);
+			Printf("Removed %d actors of type %s.\n", removecount, s);
 		}
 		else
 		{
-			Printf("%s is not an actor class.\n", classname);
+			Printf("%s is not an actor class.\n", s);
 		}
 	}
 		break;
