@@ -751,6 +751,7 @@ bool DIntermissionController::NextPage ()
 		// last page
 		return false;
 	}
+	bg.SetInvalid();
 
 	if (mScreen != NULL)
 	{
