@@ -818,4 +818,5 @@ MusInfo *GME_OpenSong(FileReader &reader, const char *fmt);
 
 extern MusInfo *currSong;
 
+EXTERN_CVAR (Float, snd_mastervolume)
 EXTERN_CVAR (Float, snd_musicvolume)

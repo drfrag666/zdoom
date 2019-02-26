@@ -2108,6 +2108,7 @@ CMPTMNU_PUSHWINDOW			= "Non-blocking lines can be pushed";
 
 // Sound Options
 SNDMNU_TITLE			= "SOUND OPTIONS";
+SNDMNU_MASTERVOLUME		= "Master volume";
 SNDMNU_SFXVOLUME		= "Sounds volume";
 SNDMNU_MENUVOLUME		= "Menu volume";
 SNDMNU_MUSICVOLUME		= "Music volume";

@@ -124,7 +124,7 @@ CUSTOM_CVAR (Float, snd_musicvolume, 0.5f, CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
 		// Set general music volume.
 		if (GSnd != NULL)
 		{
-			GSnd->SetMusicVolume(clamp<float>(self * relative_volume, 0, 1));
+			GSnd->SetMusicVolume(clamp<float>(self * relative_volume * snd_mastervolume, 0, 1));
 		}
 		// For music not implemented through the digital sound system,
 		// let them know about the change.
