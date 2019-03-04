@@ -216,11 +216,10 @@ void I_Error (const char *error, ...)
     va_list argptr;
     char errortext[MAX_ERRORTEXT];
 
-    va_start (argptr, error);
-    vsprintf (errortext, error, argptr);
-    va_end (argptr);
-
-    throw CRecoverableError (errortext);
+	va_start(argptr, error);
+	myvsnprintf (errortext, MAX_ERRORTEXT, error, argptr);
+	va_end (argptr);
+	throw CRecoverableError(errortext);
 }
 
 void I_SetIWADInfo ()
