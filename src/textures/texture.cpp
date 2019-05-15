@@ -763,6 +763,8 @@ void FTexture::FillBuffer(BYTE *buff, int pitch, int height, FTextureFormat fmt)
 	case TEX_Pal:
 	case TEX_Gray:
 		pix = GetPixels();
+		if (pix == nullptr) // Dummy texture?
+			return;
 		stride = pitch - w;
 		for (y = 0; y < h; ++y)
 		{
