@@ -1060,6 +1060,13 @@ FScriptPosition &FScriptPosition::operator=(const FScriptPosition &other)
 	return *this;
 }
 
+FScriptPosition &FScriptPosition::operator=(FScanner &sc)
+{
+	FileName = sc.ScriptName;
+	ScriptLine = sc.GetMessageLine();
+	return *this;
+}
+
 //==========================================================================
 //
 // FScriptPosition::Message
