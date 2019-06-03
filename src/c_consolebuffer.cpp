@@ -261,6 +261,8 @@ void FConsoleBuffer::FormatText(FFont *formatfont, int displaywidth)
 	if (formatfont != mLastFont || displaywidth != mLastDisplayWidth || mBufferWasCleared)
 	{
 		FreeBrokenText();
+		if (mBufferWasCleared)
+			mLastLineNeedsUpdate = false;
 		mBrokenConsoleText.Clear();
 		mBrokenStart.Clear();
 		mBrokenStart.Push(0);
