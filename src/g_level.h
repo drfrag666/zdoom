@@ -226,7 +226,9 @@ enum ELevelFlags : unsigned int
 	
 	// More flags!
 	LEVEL3_FORCEFAKECONTRAST	= 0x00000001,	// forces fake contrast even with fog enabled
-	LEVEL3_REMOVEITEMS		= 0x00000002,	// kills all INVBAR items on map change.
+	LEVEL3_REMOVEITEMS			= 0x00000002,	// kills all INVBAR items on map change.
+	LEVEL3_NEEDCLUSTERTEXT		= 0x00000004,	// A map with this flag needs to retain its cluster intermission texts when being redefined in UMAPINFO
+	LEVEL3_NOCLUSTERTEXT		= 0x00000008,	// ignore intermission texts for clusters. This gets set when UMAPINFO is used to redefine its properties.
 	LEVEL3_EXITNORMALUSED		= 0x00000020,
 	LEVEL3_EXITSECRETUSED		= 0x00000040,
 };
