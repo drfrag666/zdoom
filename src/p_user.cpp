@@ -1897,7 +1897,7 @@ void P_CheckPlayerSprite(AActor *actor, int &spritenum, DVector2 &scale)
 	}
 
 	// Set the crouch sprite?
-	if (player->crouchfactor < 0.75)
+	if (player->mo == actor && player->crouchfactor < 0.75)
 	{
 		if (spritenum == actor->SpawnState->sprite || spritenum == player->mo->crouchsprite) 
 		{
