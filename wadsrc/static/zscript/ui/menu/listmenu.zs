@@ -139,7 +139,6 @@ class ListMenu : Menu
 	{
 		int oldSelect = mDesc.mSelectedItem;
 		int startedAt = mDesc.mSelectedItem;
-		if (startedAt < 0) startedAt = 0;
 
 		switch (mkey)
 		{
