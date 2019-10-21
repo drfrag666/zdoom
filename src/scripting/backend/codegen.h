@@ -2081,6 +2081,7 @@ class FxLocalVariableDeclaration : public FxExpression
 	friend class FxCompoundStatement;
 	friend class FxLocalVariable;
 	friend class FxStaticArrayVariable;
+	friend class FxStructMember;
 
 	FName Name;
 	FxExpression *Init;
