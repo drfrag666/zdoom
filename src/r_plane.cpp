@@ -736,7 +736,7 @@ static void R_DrawSkyColumnStripe(int start_x, int y1, int y2, int columns, doub
 
 static void R_DrawSkyColumn(int start_x, int y1, int y2, int columns)
 {
-	if (1 << frontskytex->HeightBits == frontskytex->GetHeight())
+	if (1 << frontskytex->HeightBits >= frontskytex->GetHeight())
 	{
 		double texturemid = skymid * frontskytex->Scale.Y + frontskytex->GetHeight();
 		R_DrawSkyColumnStripe(start_x, y1, y2, columns, frontskytex->Scale.Y, texturemid, frontskytex->Scale.Y);
