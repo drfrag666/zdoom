@@ -356,6 +356,10 @@ class PowerInvulnerable : Powerup
 			return;
 		}
 		Owner.bInvulnerable = true;
+		if (Mode == 'Reflective')
+		{
+			Owner.bReflective = true;
+		}
 		if (Mode == 'Ghost')
 		{
 			if (!Owner.bShadow)
