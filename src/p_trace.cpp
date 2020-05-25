@@ -824,10 +824,10 @@ bool FTraceInfo::TraceTraverse (int ptflags)
 		{
 			if (in->d.line->isLinePortal() && P_PointOnLineSidePrecise(Start, in->d.line) == 0)
 			{
-				sector_t *entersector = in->d.line->backsector;
+				sector_t* entersector = in->d.line->backsector;
 				if (entersector == NULL || (hit.Z >= entersector->floorplane.ZatPoint(hit) && hit.Z <= entersector->ceilingplane.ZatPoint(hit)))
 				{
-					FLinePortal *port = in->d.line->getPortal();
+					FLinePortal* port = in->d.line->getPortal();
 					// The caller cannot handle portals without global offset.
 					if (port->mType == PORTT_LINKED || !(TraceFlags & TRACE_PortalRestrict))
 					{
@@ -838,7 +838,7 @@ bool FTraceInfo::TraceTraverse (int ptflags)
 			}
 			if (!LineCheck(in, dist, hit)) break;
 		}
-		else if ((in->d.thing->flags & ActorMask) && in->d.thing != IgnoreThis)
+		else if (((in->d.thing->flags & ActorMask) || ActorMask == 0xffffffff) && in->d.thing != IgnoreThis)
 		{
 			if (!ThingCheck(in, dist, hit)) break;
 		}
