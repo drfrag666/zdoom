@@ -561,7 +561,7 @@ void P_GiveSecret(AActor *actor, bool printmessage, bool playsound, int sectornu
 void P_PlayerOnSpecialFlat (player_t *player, int floorType)
 {
 	if (Terrains[floorType].DamageAmount &&
-		!(level.time & Terrains[floorType].DamageTimeMask))
+		!(level.time % (Terrains[floorType].DamageTimeMask+1)))
 	{
 		AInventory *ironfeet = NULL;
 
