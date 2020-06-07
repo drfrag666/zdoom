@@ -10141,9 +10141,14 @@ scriptwait:
 				else
 				{
 					FActorIterator iterator (tag);
-					AActor *actor;
+					TArray<AActor*> actorsToMorph;
 
-					while ( (actor = iterator.Next ()) )
+					while (AActor *actor = iterator.Next())
+					{
+						actorsToMorph.Push(actor);
+					}
+
+					for (AActor *actor : actorsToMorph)
 					{
 						if (actor->player)
 						{
@@ -10192,9 +10197,14 @@ scriptwait:
 				else
 				{
 					FActorIterator iterator (tag);
-					AActor *actor;
+					TArray<AActor*> actorsToUnmorph;
 
-					while ( (actor = iterator.Next ()) )
+					while (AActor *actor = iterator.Next())
+					{
+						actorsToUnmorph.Push(actor);
+					}
+
+					for (AActor *actor : actorsToUnmorph)
 					{
 						if (actor->player)
 						{
