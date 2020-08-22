@@ -1371,6 +1371,7 @@ void G_FinishTravel ()
 		{
 			inv->ChangeStatNum (STAT_INVENTORY);
 			inv->LinkToWorld (nullptr);
+			P_FindFloorCeiling(inv, FFCF_ONLYSPAWNPOS);
 
 			IFVIRTUALPTR(inv, AInventory, Travelled)
 			{
