@@ -37,6 +37,7 @@ enum ESawFlags
 	SF_NOPULLIN = 32,
 	SF_NOTURN = 64,
 	SF_STEALARMOR = 128,
+	SF_NORANDOMPUFFZ = 256,
 };
 
 // Flags for A_BFGSpray
