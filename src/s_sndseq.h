@@ -5,6 +5,8 @@
 #include "dobject.h"
 #include "s_sound.h"
 
+#define MAX_SNDSEQS			(4096)
+
 typedef enum {
 	SEQ_PLATFORM,
 	SEQ_DOOR,
