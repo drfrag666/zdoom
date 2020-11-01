@@ -623,6 +623,7 @@ DImpactDecal *DImpactDecal::StaticCreate (const FDecalTemplate *tpl, const DVect
 
 		if (!decal->StickToWall (wall, pos.X, pos.Y, ffloor).isValid())
 		{
+			decal->Destroy();
 			return NULL;
 		}
 
