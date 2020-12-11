@@ -539,7 +539,7 @@ int strbin (char *str)
 	while ( (c = *p++) ) {
 		if (c != '\\') {
 			*str++ = c;
-		} else {
+		} else if (*p != 0) {
 			switch (*p) {
 				case 'a':
 					*str++ = '\a';
@@ -642,7 +642,7 @@ FString strbin1 (const char *start)
 	while ( (c = *p++) ) {
 		if (c != '\\') {
 			result << c;
-		} else {
+		} else if (*p) {
 			switch (*p) {
 				case 'a':
 					result << '\a';
