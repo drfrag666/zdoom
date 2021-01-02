@@ -269,8 +269,7 @@ class USDFParser : public UDMFParserBase
 				check.Item = dyn_cast<PClassInventory>(CheckActorType(key));
 				break;
 
-			case NAME_Count:
-				// Not yet implemented in the engine. Todo later
+			case NAME_Amount:
 				check.Amount = CheckInt(key);
 				break;
 			}
