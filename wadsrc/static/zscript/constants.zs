@@ -953,6 +953,7 @@ enum ESkillProperty
 	SKILLP_EasyKey,
 	SKILLP_SlowMonsters,
 	SKILLP_Infight,
+	SKILLP_InstantReaction,
 };
 enum EFSkillProperty	// floating point properties
 {
