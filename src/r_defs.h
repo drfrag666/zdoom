@@ -475,6 +475,12 @@ struct FLinkedSector
 {
 	sector_t *Sector;
 	int Type;
+	
+	FLinkedSector(sector_t *sector = nullptr, int type = 0)
+	: Sector(sector)
+	, Type(type)
+	{
+	}
 };
 
 
