@@ -2369,7 +2369,8 @@ void D_DoomMain (void)
 		// Process automatically executed files
 		FExecList *exec;
 		execFiles = new DArgs;
-		GameConfig->AddAutoexec(execFiles, gameinfo.ConfigName);
+		if (!(Args->CheckParm("-noautoexec")))
+			GameConfig->AddAutoexec(execFiles, gameinfo.ConfigName);
 		exec = D_MultiExec(execFiles, NULL);
 
 		// Process .cfg files at the start of the command line.
