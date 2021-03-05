@@ -778,7 +778,7 @@ static void ReadMultiplePlayers(FSerializer &arc, int numPlayers, int numPlayers
 	}
 	else
 	{
-		for (i = 0; i < MAXPLAYERS; ++i)
+		for (i = 0; i < numPlayers; ++i)
 		{
 			players[i].mo = playertemp[i].mo;
 		}
