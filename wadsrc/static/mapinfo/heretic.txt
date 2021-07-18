@@ -307,7 +307,7 @@ skill nightmare
 skill extreme_zd32
 {
 	DoubleSpawn
-	DamageFactor = 1.5
+	DamageFactor = 1.4
 	MonsterHealth = 0.6
 	HealthFactor = 0.6
 	DisableCheats
