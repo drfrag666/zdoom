@@ -5203,12 +5203,12 @@ AActor *P_SpawnMapThing (FMapThing *mthing, int position)
 		if (spawned)
 		{
 			SetMobj(mobj, mthing);
-		}
-		mobj2 = AActor::StaticSpawn (i, DVector3(mthing->pos.X + 2 * info->radius, mthing->pos.Y, sz), NO_REPLACE, true);
-		spawned = CheckDoubleSpawn (mobj2, info, mthing, sz, i, false);
-		if (spawned)
-		{
-			SetMobj(mobj2, mthing);
+			mobj2 = AActor::StaticSpawn (i, DVector3(mthing->pos.X + 2 * info->radius, mthing->pos.Y, sz), NO_REPLACE, true);
+			spawned = CheckDoubleSpawn (mobj2, info, mthing, sz, i, false);
+			if (spawned)
+			{
+				SetMobj(mobj2, mthing);
+			}
 		}
 	}
 	else
