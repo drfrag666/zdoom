@@ -581,10 +581,14 @@ void I_DetectOS(void)
 			{
 				osname = (info.wProductType == VER_NT_WORKSTATION) ? "8.1" : "Server 2012 R2";
 			}
-			else if (info.dwMinorVersion >= 4)
+			else if (info.dwMinorVersion == 4)
 			{
-				osname = (info.wProductType == VER_NT_WORKSTATION) ? "10 (or higher)" : "Server 2016 (or higher)";
+				osname = (info.wProductType == VER_NT_WORKSTATION) ? "10 (beta)" : "Server 2016 (beta)";
 			}
+		}
+		else if (info.dwMajorVersion == 10)
+		{
+			osname = (info.wProductType == VER_NT_WORKSTATION) ? "10 (or higher)" : "Server 2016 (or higher)";
 		}
 		break;
 
