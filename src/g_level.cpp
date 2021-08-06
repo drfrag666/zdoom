@@ -332,6 +332,10 @@ void G_NewInit ()
 		pawn->Destroy();
 	}
 
+	// Destroy thinkers that may remain after change level failure
+	// Usually, the list contains just a sentinel when such error occurred
+	DThinker::DestroyThinkersInList(STAT_TRAVELLING);
+
 	G_ClearSnapshots ();
 	ST_SetNeedRefresh();
 	netgame = false;
