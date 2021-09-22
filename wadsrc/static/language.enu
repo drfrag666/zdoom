@@ -1887,6 +1887,7 @@ MISCMNU_CACHENODES				= "Cache nodes";
 MISCMNU_CACHETIME				= "Time threshold for node caching";
 MISCMNU_CLEARNODECACHE			= "Clear node cache";
 MISCMNU_HIDEEXTREME				= "Hide extreme skill level";
+MISCMNU_PISTOLSTART				= "Pistol start (Doom)";
 
 // Automap Options
 AUTOMAPMNU_TITLE				= "AUTOMAP OPTIONS";

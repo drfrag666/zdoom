@@ -950,6 +950,7 @@ OptionMenu "MiscOptions"
 	Option "$MISCMNU_ENABLEAUTOSAVES",			"disableautosave", "Autosave"
 	Option "$MISCMNU_SAVELOADCONFIRMATION",			"saveloadconfirmation", "OnOff"
 	Slider "$MISCMNU_AUTOSAVECOUNT",			"autosavecount", 1, 20, 1, 0
+	Option "$MISCMNU_PISTOLSTART",				"pistolstart", "OnOff"
 	Option "$MISCMNU_DEHLOAD",					"dehload", "dehopt"
 	Option "$MISCMNU_HIDEEXTREME",				"menu_hideextreme", "OnOff"
 	StaticText " "
