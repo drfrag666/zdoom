@@ -2173,6 +2173,7 @@ MODMNU_CHIPOMATIC		= "Chip-o-matic";
 VIDMNU_TITLE			= "VIDEO MODE";
 VIDMNU_FULLSCREEN		= "Fullscreen";
 VIDMNU_HIDPI			= "Retina/HiDPI support";
+VIDMNU_BRDLSS			= "Borderless Windowed Mode";
 VIDMNU_ASPECTRATIO		= "Aspect ratio";
 VIDMNU_FORCEASPECT		= "Force aspect ratio";
 VIDMNU_5X4ASPECTRATIO	= "Enable 5:4 aspect ratio";
