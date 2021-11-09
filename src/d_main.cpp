@@ -207,10 +207,7 @@ CUSTOM_CVAR (String, vid_cursor, "None", CVAR_ARCHIVE | CVAR_NOINITCALL)
 	}
 }
 
-// Controlled by startup dialog
 CVAR (Bool, disableautoload, false, CVAR_ARCHIVE | CVAR_NOINITCALL | CVAR_GLOBALCONFIG)
-CVAR (Bool, autoloadbrightmaps, false, CVAR_ARCHIVE | CVAR_NOINITCALL | CVAR_GLOBALCONFIG)
-CVAR (Bool, autoloadlights, false, CVAR_ARCHIVE | CVAR_NOINITCALL | CVAR_GLOBALCONFIG)
 
 bool wantToRestart;
 bool DrawFSHUD;				// [RH] Draw fullscreen HUD?
@@ -2058,23 +2055,6 @@ static void D_DoomInit()
 static void AddAutoloadFiles(const char *autoname)
 {
 	LumpFilterIWAD.Format("%s.", autoname);	// The '.' is appened to simplify parsing the string 
-
-	// [SP] Dialog reaction - load lights.pk3 and brightmaps.pk3 based on user choices
-	if (!(gameinfo.flags & GI_SHAREWARE))
-	{
-		if (autoloadlights)
-		{
-			const char *lightswad = BaseFileSearch ("lights.pk3", NULL);
-			if (lightswad)
-				D_AddFile (allwads, lightswad);
-		}
-		if (autoloadbrightmaps)
-		{
-			const char *bmwad = BaseFileSearch ("brightmaps.pk3", NULL);
-			if (bmwad)
-				D_AddFile (allwads, bmwad);
-		}
-	}
 
 	if (!(gameinfo.flags & GI_SHAREWARE) && !Args->CheckParm("-noautoload") && !disableautoload)
 	{

@@ -315,7 +315,9 @@ do_stop:
 					do
 					{
 						sc.MustGetString();
-						AddStateLight(&state, sc.String);
+						#ifdef DYNLIGHT
+							AddStateLight(&state, sc.String);
+						#endif
 					}
 					while (sc.CheckString(","));
 					sc.MustGetStringName(")");

@@ -62,45 +62,6 @@ bool ForceWindowed;
 
 IVideo *Video;
 
-// do not include GL headers here, only declare the necessary functions.
-IVideo *gl_CreateVideo();
-FRenderer *gl_CreateInterface();
-
-void I_RestartRenderer();
-int currentrenderer = -1;
-bool changerenderer;
-
-// [ZDoomGL]
-CUSTOM_CVAR (Int, vid_renderer, 1, CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_NOINITCALL)
-{
-	// 0: Software renderer
-	// 1: OpenGL renderer
-
-	if (self != currentrenderer)
-	{
-		switch (self)
-		{
-		case 0:
-			Printf("Switching to software renderer...\n");
-			break;
-		case 1:
-			Printf("Switching to OpenGL renderer...\n");
-			break;
-		default:
-			Printf("Unknown renderer (%d).  Falling back to software renderer...\n", *vid_renderer);
-			self = 0; // make sure to actually switch to the software renderer
-			break;
-		}
-		//changerenderer = true;
-		Printf("You must restart " GAMENAME " to switch the renderer\n");
-	}
-}
-
-CCMD (vid_restart)
-{
-}
-
-
 void I_ShutdownGraphics ()
 {
 	if (screen)
@@ -135,10 +96,7 @@ void I_InitGraphics ()
 	}
 	val.Bool = !!Args->CheckParm ("-devparm");
 	ticker.SetGenericRepDefault (val, CVAR_Bool);
-
-	//currentrenderer = vid_renderer;
-	if (currentrenderer==1) Video = gl_CreateVideo();
-	else Video = new Win32Video (0);
+	Video = new Win32Video (0);
 
 	if (Video == NULL)
 		I_FatalError ("Failed to initialize display");
@@ -155,11 +113,9 @@ static void I_DeleteRenderer()
 
 void I_CreateRenderer()
 {
-	currentrenderer = vid_renderer;
 	if (Renderer == NULL)
 	{
-		if (currentrenderer==1) Renderer = gl_CreateInterface();
-		else Renderer = new FSoftwareRenderer;
+		Renderer = new FSoftwareRenderer;
 		atterm(I_DeleteRenderer);
 	}
 }
@@ -299,7 +255,7 @@ void I_SaveWindowedPos ()
 		return;
 	}
 	// Make sure we only save the window position if it's not fullscreen.
-	static const int WINDOW_STYLE = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX;
+	static const int WINDOW_STYLE = WS_OVERLAPPEDWINDOW;
 	if ((GetWindowLong (Window, GWL_STYLE) & WINDOW_STYLE) == WINDOW_STYLE)
 	{
 		RECT wrect;
@@ -377,7 +333,7 @@ CUSTOM_CVAR (Float, vid_winscale, 1.f, CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
 		NewWidth = screen->GetWidth();
 		NewHeight = screen->GetHeight();
 		NewBits = DisplayBits;
-		//setmodeneeded = true;	// This CVAR doesn't do anything and only causes problems!
+		setmodeneeded = true;
 	}
 }
 

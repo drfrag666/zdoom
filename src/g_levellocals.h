@@ -102,11 +102,6 @@ inline int line_t::Index() const
 	return int(this - &level.lines[0]);
 }
 
-inline FSectorPortal *line_t::GetTransferredPortal()
-{
-	return portaltransferred >= level.sectorPortals.Size() ? (FSectorPortal*)nullptr : &level.sectorPortals[portaltransferred];
-}
-
 inline int sector_t::Index() const 
 { 
 	return int(this - &level.sectors[0]); 

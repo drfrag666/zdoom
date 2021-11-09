@@ -396,6 +396,5 @@ void InitActorNumsFromMapinfo();
 
 int GetSpriteIndex(const char * spritename, bool add = true);
 TArray<FName> &MakeStateNameList(const char * fname);
-void AddStateLight(FState *state, const char *lname);
 
 #endif	// __INFO_H__

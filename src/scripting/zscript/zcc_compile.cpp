@@ -2790,16 +2790,6 @@ void ZCCCompiler::CompileStates()
 						state.Misc2 = IntConstFromNode(static_cast<ZCC_Expression *>(sl->Offset->SiblingNext), c->Type());
 					}
 
-					if (sl->Lights != nullptr)
-					{
-						auto l = sl->Lights;
-						do
-						{
-							AddStateLight(&state, StringConstFromNode(l, c->Type()));
-							l = static_cast<decltype(l)>(l->SiblingNext);
-						} while (l != sl->Lights);
-					}
-
 					if (sl->Action != nullptr)
 					{
 						auto code = SetupActionFunction(static_cast<PClassActor *>(c->Type()), sl->Action, state.UseFlags);

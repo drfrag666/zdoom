@@ -471,12 +471,12 @@ void DSectorPlaneInterpolation::Restore()
 	if (!ceiling)
 	{
 		sector->floorplane.setD(bakheight);
-		sector->SetPlaneTexZ(sector_t::floor, baktexz, true);
+		sector->SetPlaneTexZ(sector_t::floor, baktexz);
 	}
 	else
 	{
 		sector->ceilingplane.setD(bakheight);
-		sector->SetPlaneTexZ(sector_t::ceiling, baktexz, true);
+		sector->SetPlaneTexZ(sector_t::ceiling, baktexz);
 	}
 	P_RecalculateAttached3DFloors(sector);
 	sector->CheckPortalPlane(ceiling? sector_t::ceiling : sector_t::floor);
@@ -514,8 +514,8 @@ void DSectorPlaneInterpolation::Interpolate(double smoothratio)
 	else
 	{
 		pplane->setD(oldheight + (bakheight - oldheight) * smoothratio);
-		sector->SetPlaneTexZ(pos, oldtexz + (baktexz - oldtexz) * smoothratio, true);
-	P_RecalculateAttached3DFloors(sector);
+		sector->SetPlaneTexZ(pos, oldtexz + (baktexz - oldtexz) * smoothratio);
+		P_RecalculateAttached3DFloors(sector);
 		sector->CheckPortalPlane(pos);
 	}
 }

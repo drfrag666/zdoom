@@ -1696,7 +1696,7 @@ DEFINE_ACTION_FUNCTION(_Sector, NextLowestFloorAt)
 	 PARAM_INT(pos);
 	 PARAM_FLOAT(o);
 	 PARAM_BOOL_DEF(dirty);
-	 self->SetPlaneTexZ(pos, o, dirty);
+	 self->SetPlaneTexZ(pos, o);
 	 return 0;
  }
 
@@ -2419,7 +2419,6 @@ DEFINE_FIELD_X(Line, line_t, backsector)
 DEFINE_FIELD_X(Line, line_t, validcount)
 DEFINE_FIELD_X(Line, line_t, locknumber)
 DEFINE_FIELD_X(Line, line_t, portalindex)
-DEFINE_FIELD_X(Line, line_t, portaltransferred)
 
 DEFINE_FIELD_X(Side, side_t, sector)
 DEFINE_FIELD_X(Side, side_t, linedef)

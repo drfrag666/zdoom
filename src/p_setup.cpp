@@ -2150,7 +2150,6 @@ void P_LoadLineDefs (MapData * map)
 	{
 		ld->alpha = 1.;	// [RH] Opaque by default
 		ld->portalindex = UINT_MAX;
-		ld->portaltransferred = UINT_MAX;
 
 		// [RH] Translate old linedef special and flags to be
 		//		compatible with the new format.
@@ -2244,7 +2243,6 @@ void P_LoadLineDefs2 (MapData * map)
 		int j;
 
 		ld->portalindex = UINT_MAX;
-		ld->portaltransferred = UINT_MAX;
 
 		for (j = 0; j < 5; j++)
 			ld->args[j] = mld->args[j];
@@ -4056,13 +4054,6 @@ void P_SetupLevel (const char *lumpname, int position)
 
 	// set up world state
 	P_SpawnSpecials ();
-
-	// disable reflective planes on sloped sectors.
-	for (auto &sec : level.sectors)
-	{
-		if (sec.floorplane.isSlope()) sec.reflect[sector_t::floor] = 0;
-		if (sec.ceilingplane.isSlope()) sec.reflect[sector_t::ceiling] = 0;
-	}
 
 	// This must be done BEFORE the PolyObj Spawn!!!
 	Renderer->PreprocessLevel();

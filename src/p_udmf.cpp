@@ -836,7 +836,6 @@ public:
 		memset(ld, 0, sizeof(*ld));
 		ld->alpha = 1.;
 		ld->portalindex = UINT_MAX;
-		ld->portaltransferred = UINT_MAX;
 		ld->sidedef[0] = ld->sidedef[1] = NULL;
 		if (level.flags2 & LEVEL2_CLIPMIDTEX) ld->flags |= ML_CLIP_MIDTEX;
 		if (level.flags2 & LEVEL2_WRAPMIDTEX) ld->flags |= ML_WRAP_MIDTEX;
@@ -1632,14 +1631,6 @@ public:
 
 				case NAME_ceilingterrain:
 					sec->terrainnum[sector_t::ceiling] = P_FindTerrain(CheckString(key));
-					break;
-
-				case NAME_floor_reflect:
-					sec->reflect[sector_t::floor] = (float)CheckFloat(key);
-					break;
-
-				case NAME_ceiling_reflect:
-					sec->reflect[sector_t::ceiling] = (float)CheckFloat(key);
 					break;
 
 				case NAME_floorglowcolor:

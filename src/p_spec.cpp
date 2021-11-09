@@ -985,23 +985,6 @@ static void CopyPortal(int sectortag, int plane, unsigned pnum, double alpha, bo
 				}
 			}
 		}
-		if (tolines && line.special == Sector_SetPortal &&
-			line.args[1] == 5 &&
-			line.args[3] == sectortag)
-		{
-			if (line.args[0] == 0)
-			{
-				line.portaltransferred = pnum;
-			}
-			else
-			{
-				FLineIdIterator itr(line.args[0]);
-				while ((s = itr.Next()) >= 0)
-				{
-					level.lines[s].portaltransferred = pnum;
-				}
-			}
-		}
 	}
 }
 
