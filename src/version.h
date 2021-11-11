@@ -31,8 +31,6 @@
 **
 */
 
-#include "gitinfo.h"
-
 #ifndef __VERSION_H__
 #define __VERSION_H__
 
@@ -43,11 +41,7 @@ const char *GetVersionString();
 
 /** Lots of different version numbers **/
 
-#ifdef GIT_DESCRIPTION
-#define VERSIONSTR GIT_DESCRIPTION
-#else
 #define VERSIONSTR "2.9pre"
-#endif
 
 // The version as seen in the Windows resource
 #define RC_FILEVERSION 2,8,9999,0
