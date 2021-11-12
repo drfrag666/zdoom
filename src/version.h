@@ -86,14 +86,14 @@ const char *GetVersionString();
 #define SAVEVER 4550
 
 // This is so that derivates can use the same savegame versions without worrying about engine compatibility
-#define GAMESIG "ZDOOM"
-#define BASEWAD "zdoom.pk3"
+#define GAMESIG "ZZDOOM"
+#define BASEWAD "zzdoom.pk3"
 
 // More stuff that needs to be different for derivatives.
-#define GAMENAME "ZDoom"
-#define GAMENAMELOWERCASE "zdoom"
-#define FORUM_URL "http://forum.drdteam.org"
-#define BUGS_FORUM_URL	"http://forum.drdteam.org/viewforum.php?f=24"
+#define GAMENAME "ZZDoom"
+#define GAMENAMELOWERCASE "zzdoom"
+#define FORUM_URL "http://forum.zdoom.org"
+#define BUGS_FORUM_URL	"http://forum.zdoom.org/index.php?c=3"
 
 #if defined(__APPLE__) || defined(_WIN32)
 #define GAME_DIR GAMENAME
