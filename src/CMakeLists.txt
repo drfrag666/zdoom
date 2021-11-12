@@ -108,7 +108,7 @@ if( WIN32 )
 	set( FMOD_LIB_PATH_SUFFIXES PATH_SUFFIXES lib )
 	
 	if( ( MSVC14 AND NOT CMAKE_GENERATOR_TOOLSET STREQUAL "v140_xp" ) OR	# For VS 2015.
-		( MSVC15 AND NOT CMAKE_GENERATOR_TOOLSET STREQUAL "v150_xp" ) )		# For VS 2017.
+		( MSVC15 AND NOT CMAKE_GENERATOR_TOOLSET STREQUAL "v141_xp" ) )		# For VS 2017.
 		# for modern Windows SDKs the DirectX headers should be available by default.
 		set( DX_dinput8_LIBRARY dinput8 )
 		set( DX_dxguid_LIBRARY dxguid )
