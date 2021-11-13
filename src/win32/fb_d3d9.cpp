@@ -2327,7 +2327,7 @@ bool D3DTex::Update()
 
 	assert(Box != NULL);
 	assert(Box->Owner != NULL);
-	//assert(Box->Owner->Tex != NULL);
+	assert(Box->Owner->Tex != NULL);
 	assert(GameTex != NULL);
 
 	if (Box->Owner->Tex == NULL)
@@ -2838,7 +2838,7 @@ void D3DFB::DrawTextureParms (FTexture *img, DrawParms &parms)
 
 	if (tex == NULL)
 	{
-		//assert(tex != NULL);
+		assert(tex != NULL);
 		return;
 	}
 
