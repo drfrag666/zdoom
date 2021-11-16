@@ -45,8 +45,8 @@ typedef int SRes;
 
 #ifdef _WIN32
 
-/* typedef DWORD WRes; */
-typedef unsigned WRes;
+typedef DWORD WRes;
+/* typedef unsigned WRes; */
 #define MY_SRes_HRESULT_FROM_WRes(x) HRESULT_FROM_WIN32(x)
 
 #else
