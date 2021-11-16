@@ -5,7 +5,7 @@
 #define __7Z_TYPES_H
 
 #ifdef _WIN32
-/* #include <windows.h> */
+#include <windows.h>
 #endif
 
 #include <stddef.h>
@@ -45,8 +45,8 @@ typedef int SRes;
 
 #ifdef _WIN32
 
-/* typedef DWORD WRes; */
-typedef unsigned WRes;
+typedef DWORD WRes;
+/* typedef unsigned WRes; */
 #define MY_SRes_HRESULT_FROM_WRes(x) HRESULT_FROM_WIN32(x)
 
 #else
