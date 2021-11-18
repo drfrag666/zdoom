@@ -480,6 +480,11 @@ void ParseScripts()
 	while ((lump = Wads.FindLump("ZSCRIPT", &lastlump)) != -1)
 	{
 		DoParse(lump);
+		if (Args->CheckParm("-nozscript"))
+		{
+			Printf(TEXTCOLOR_PURPLE "WARNING! ZScript disabled!\n");
+			return;
+		}
 	}
 }
 
