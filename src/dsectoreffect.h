@@ -12,7 +12,7 @@ public:
 
 	
 	void Serialize(FSerializer &arc);
-	void Destroy() override;
+	void OnDestroy() override;
 
 	sector_t *GetSector() const { return m_Sector; }
 
@@ -29,13 +29,13 @@ public:
 	DMover (sector_t *sector);
 	void StopInterpolation(bool force = false);
 protected:
-	TObjPtr<DInterpolation> interpolation;
+	TObjPtr<DInterpolation*> interpolation;
 private:
 protected:
 	DMover ();
 	
 	void Serialize(FSerializer &arc);
-	void Destroy() override;
+	void OnDestroy() override;
 };
 
 class DMovingFloor : public DMover

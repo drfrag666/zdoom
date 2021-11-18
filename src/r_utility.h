@@ -38,7 +38,7 @@ extern bool				LocalKeyboardTurner;	// [RH] The local player used the keyboard t
 extern float			WidescreenRatio;
 
 extern double			r_TicFracF;
-extern DWORD			r_FrameTime;
+extern uint32_t			r_FrameTime;
 extern int				extralight;
 extern unsigned int		R_OldBlend;
 
@@ -107,7 +107,7 @@ extern void R_ClearPastViewer (AActor *actor);
 struct FCanvasTextureInfo
 {
 	FCanvasTextureInfo *Next;
-	TObjPtr<AActor> Viewpoint;
+	TObjPtr<AActor*> Viewpoint;
 	FCanvasTexture *Texture;
 	FTextureID PicNum;
 	int FOV;

@@ -57,6 +57,7 @@
 #include "r_utility.h"
 #include "d_player.h"
 #include "p_local.h"
+#include "g_levellocals.h"
 #include "p_maputl.h"
 #include "math/cmath.h"
 
@@ -130,7 +131,7 @@ double	 		ViewSin, ViewTanSin;
 AActor			*camera;	// [RH] camera to draw from. doesn't have to be a player
 
 double			r_TicFracF;			// same as floating point
-DWORD			r_FrameTime;		// [RH] Time this frame started drawing (in ms)
+uint32_t			r_FrameTime;		// [RH] Time this frame started drawing (in ms)
 bool			r_NoInterpolate;
 bool			r_showviewer;
 
@@ -271,13 +272,13 @@ void R_ExecuteSetViewSize ()
 	setsizeneeded = false;
 	V_SetBorderNeedRefresh();
 
-	R_SetWindow (setblocks, SCREENWIDTH, SCREENHEIGHT, ST_Y);
+	R_SetWindow (setblocks, SCREENWIDTH, SCREENHEIGHT, gST_Y);
 
 	// Handle resize, e.g. smaller view windows with border and/or status bar.
 	viewwindowx = (screen->GetWidth() - viewwidth) >> 1;
 
 	// Same with base row offset.
-	viewwindowy = (viewwidth == screen->GetWidth()) ? 0 : (ST_Y - viewheight) >> 1;
+	viewwindowy = (viewwidth == screen->GetWidth()) ? 0 : (gST_Y - viewheight) >> 1;
 }
 
 //==========================================================================
@@ -322,7 +323,7 @@ subsector_t *R_PointInSubsector (fixed_t x, fixed_t y)
 	}
 	while (!((size_t)node & 1));
 		
-	return (subsector_t *)((BYTE *)node - 1);
+	return (subsector_t *)((uint8_t *)node - 1);
 }
 
 //==========================================================================
@@ -335,8 +336,6 @@ void R_Init ()
 {
 	atterm (R_Shutdown);
 
-	StartScreen->Progress();
-	V_InitFonts();
 	StartScreen->Progress();
 	// Colormap init moved back to InitPalette()
 	//R_InitColormaps ();

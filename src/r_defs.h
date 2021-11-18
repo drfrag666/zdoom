@@ -23,7 +23,6 @@
 #ifndef __R_DEFS_H__
 #define __R_DEFS_H__
 
-#include <forward_list>
 #include "doomdef.h"
 #include "templates.h"
 #include "memarena.h"
@@ -37,14 +36,15 @@
 // to handle sound origins in sectors.
 // SECTORS do store MObjs anyway.
 #include "actor.h"
+struct seg_t;
 
 #include "dthinker.h"
 
 #define MAXWIDTH 5760
 #define MAXHEIGHT 3600
 
-const WORD NO_INDEX = 0xffffu;
-const DWORD NO_SIDE = 0xffffffffu;
+const uint16_t NO_INDEX = 0xffffu;
+const uint32_t NO_SIDE = 0xffffffffu;
 
 // Silhouette, needed for clipping Segs (mainly)
 // and sprites representing things.
@@ -77,22 +77,12 @@ enum
 struct vertexdata_t
 {
 	double zCeiling, zFloor;
-	DWORD flags;
+	uint32_t flags;
 };
-
-#ifdef USE_FLOAT
-typedef float vtype;
-#elif !defined USE_FIXED
-typedef double vtype;
-#endif
-
 
 struct vertex_t
 {
-private:
 	DVector2 p;
-
-public:
 
 	void set(fixed_t x, fixed_t y)
 	{
@@ -131,10 +121,12 @@ public:
 		return FLOAT2FIXED(p.Y);
 	}
 
-	DVector2 fPos()
+	DVector2 fPos() const
 	{
-		return { p.X, p.Y };
+		return p;
 	}
+
+	int Index() const;
 
 	bool operator== (const vertex_t &other)
 	{
@@ -210,7 +202,7 @@ struct FUDMFKey
 	FUDMFKey& operator =(const FString &val)
 	{
 		Type = UDMF_String;
-		IntVal = strtol(val.GetChars(), NULL, 0);
+		IntVal = (int)strtoll(val.GetChars(), NULL, 0);
 		FloatVal = strtod(val.GetChars(), NULL);
 		StringVal = val;
 		return *this;
@@ -249,32 +241,12 @@ enum
 	SECSPAC_HitFakeFloor= 1024,	// Trigger when player hits fake floor
 };
 
-class ASectorAction : public AActor
-{
-	DECLARE_CLASS (ASectorAction, AActor)
-public:
-	ASectorAction (bool activatedByUse = false);
-	void Destroy () override;
-	void BeginPlay ();
-	void Activate (AActor *source);
-	void Deactivate (AActor *source);
-	bool TriggerAction(AActor *triggerer, int activationType);
-	bool CanTrigger (AActor *triggerer) const;
-	bool IsActivatedByUse() const;
-protected:
-	virtual bool DoTriggerAction(AActor *triggerer, int activationType);
-	bool CheckTrigger(AActor *triggerer) const;
-private:
-	bool ActivatedByUse;
-};
-
-class ASkyViewpoint;
-
 struct secplane_t
 {
 	// the plane is defined as a*x + b*y + c*z + d = 0
 	// ic is 1/c, for faster Z calculations
 
+//private:
 	DVector3 normal;
 	double  D, negiC;	// negative iC because that also saves a negation in all methods using this.
 public:
@@ -437,6 +409,7 @@ public:
 };
 
 #include "p_3dfloors.h"
+
 // Ceiling/floor flags
 enum
 {
@@ -480,6 +453,7 @@ enum
 	SECF_ENDGODMODE		= 256,	// getting damaged by this sector ends god mode
 	SECF_ENDLEVEL		= 512,	// ends level when health goes below 10
 	SECF_HAZARD			= 1024,	// Change to Strife's delayed damage handling.
+	SECF_NOATTACK		= 2048,	// monsters cannot start attacks in this sector.
 
 	SECF_WASSECRET		= 1 << 30,	// a secret that was discovered
 	SECF_SECRET			= 1 << 31,	// a secret sector
@@ -594,9 +568,9 @@ struct sector_t
 	// Member functions
 
 private:
-	bool MoveAttached(int crush, double move, int floorOrCeiling, bool resetfailed);
+	bool MoveAttached(int crush, double move, int floorOrCeiling, bool resetfailed, bool instant = false);
 public:
-	EMoveResult MoveFloor(double speed, double dest, int crush, int direction, bool hexencrush);
+	EMoveResult MoveFloor(double speed, double dest, int crush, int direction, bool hexencrush, bool instant = false);
 	EMoveResult MoveCeiling(double speed, double dest, int crush, int direction, bool hexencrush);
 
 	inline EMoveResult MoveFloor(double speed, double dest, int direction)
@@ -627,6 +601,7 @@ public:
 	double FindLowestCeilingPoint(vertex_t **v) const;
 	double FindHighestFloorPoint(vertex_t **v) const;
 	void RemoveForceField();
+	int Index() const;
 
 	void AdjustFloorClip () const;
 	void SetColor(int r, int g, int b, int desat);
@@ -636,16 +611,22 @@ public:
 	int GetCeilingLight () const;
 	sector_t *GetHeightSec() const;
 	double GetFriction(int plane = sector_t::floor, double *movefac = NULL) const;
+	bool TriggerSectorActions(AActor *thing, int activation);
 
 	DInterpolation *SetInterpolation(int position, bool attach);
 
 	FSectorPortal *ValidatePortal(int which);
 	void CheckPortalPlane(int plane);
 
+
 	enum
 	{
 		floor,
-		ceiling
+		ceiling,
+		// only used for specialcolors array
+		walltop,
+		wallbottom,
+		sprites
 	};
 
 	struct splane
@@ -654,8 +635,10 @@ public:
 		int Flags;
 		int Light;
 		double alpha;
-		FTextureID Texture;
 		double TexZ;
+		PalEntry GlowColor;
+		float GlowHeight;
+		FTextureID Texture;
 	};
 
 
@@ -887,30 +870,11 @@ public:
 		Portals[plane] = 0;
 	}
 
-	FSectorPortal *GetPortal(int plane)
-	{
-		return &sectorPortals[Portals[plane]];
-	}
-
-	double GetPortalPlaneZ(int plane)
-	{
-		return sectorPortals[Portals[plane]].mPlaneZ;
-	}
-
-	DVector2 GetPortalDisplacement(int plane)
-	{
-		return sectorPortals[Portals[plane]].mDisplacement;
-	}
-
-	int GetPortalType(int plane)
-	{
-		return sectorPortals[Portals[plane]].mType;
-	}
-
-	int GetOppositePortalGroup(int plane)
-	{
-		return sectorPortals[Portals[plane]].mDestination->PortalGroup;
-	}
+	FSectorPortal *GetPortal(int plane);
+	double GetPortalPlaneZ(int plane);
+	DVector2 GetPortalDisplacement(int plane);
+	int GetPortalType(int plane);
+	int GetOppositePortalGroup(int plane);
 
 	int GetTerrain(int pos) const;
 
@@ -934,6 +898,11 @@ public:
 		return LowestFloorAt(a->Pos(), resultsec);
 	}
 
+	bool isClosed() const
+	{
+		return floorplane.Normal() == -ceilingplane.Normal() && floorplane.D == -ceilingplane.D;
+	}
+
 	double NextHighestCeilingAt(double x, double y, double bottomz, double topz, int flags = 0, sector_t **resultsec = NULL, F3DFloor **resultffloor = NULL);
 	double NextLowestFloorAt(double x, double y, double z, int flags = 0, double steph = 0, sector_t **resultsec = NULL, F3DFloor **resultffloor = NULL);
 
@@ -946,9 +915,10 @@ public:
 
 	// [RH] give floor and ceiling even more properties
 	FDynamicColormap *ColorMap;	// [RH] Per-sector colormap
+	PalEntry	SpecialColors[5];
 
 
-	TObjPtr<AActor> SoundTarget;
+	TObjPtr<AActor*> SoundTarget;
 
 	short		special;
 	short		lightlevel;
@@ -969,9 +939,9 @@ public:
 	int			terrainnum[2];
 
 	// thinker_t for reversable actions
-	TObjPtr<DSectorEffect> floordata;			// jff 2/22/98 make thinkers on
-	TObjPtr<DSectorEffect> ceilingdata;			// floors, ceilings, lighting,
-	TObjPtr<DSectorEffect> lightingdata;		// independent of one another
+	TObjPtr<DSectorEffect*> floordata;			// jff 2/22/98 make thinkers on
+	TObjPtr<DSectorEffect*> ceilingdata;			// floors, ceilings, lighting,
+	TObjPtr<DSectorEffect*> lightingdata;		// independent of one another
 
 	enum
 	{
@@ -980,28 +950,27 @@ public:
 		CeilingScroll,
 		FloorScroll
 	};
-	TObjPtr<DInterpolation> interpolations[4];
+	TObjPtr<DInterpolation*> interpolations[4];
 
-	BYTE 		soundtraversed;	// 0 = untraversed, 1,2 = sndlines -1
-	// jff 2/26/98 lockout machinery for stairbuilding
-	SBYTE stairlock;	// -2 on first locked -1 after thinker done 0 normally
 	int prevsec;		// -1 or number of sector for previous step
-		int nextsec;		// -1 or number of next step sector
+	int nextsec;		// -1 or number of next step sector
+	uint8_t 		soundtraversed;	// 0 = untraversed, 1,2 = sndlines -1
+	// jff 2/26/98 lockout machinery for stairbuilding
+	int8_t stairlock;	// -2 on first locked -1 after thinker done 0 normally
 
-	short linecount;
-	struct line_t **lines;		// [linecount] size
+	TStaticPointedArray<line_t *> Lines;
 
 	// killough 3/7/98: support flat heights drawn at another sector's heights
 	sector_t *heightsec;		// other sector, or NULL if no other sector
 
-	DWORD bottommap, midmap, topmap;	// killough 4/4/98: dynamic colormaps
+	uint32_t bottommap, midmap, topmap;	// killough 4/4/98: dynamic colormaps
 										// [RH] these can also be blend values if
 										//		the alpha mask is non-zero
 
 	// list of mobjs that are at least partially in the sector
 	// thinglist is a subset of touching_thinglist
 	struct msecnode_t *touching_thinglist;				// phares 3/14/98
-	struct msecnode_t *render_thinglist;				// for cross-portal rendering.
+	struct msecnode_t *sectorportal_thinglist;				// for cross-portal rendering.
 	struct msecnode_t *touching_renderthings; // this is used to allow wide things to be rendered not only from their main sector.
 
 	double gravity;			// [RH] Sector gravity (1.0 is normal)
@@ -1010,15 +979,15 @@ public:
 	short damageinterval;	// Interval for damage application
 	short leakydamage;		// chance of leaking through radiation suit
 
-	WORD ZoneNumber;	// [RH] Zone this sector belongs to
-	WORD MoreFlags;		// [RH] Internal sector flags
-	DWORD Flags;		// Sector flags
+	uint16_t ZoneNumber;	// [RH] Zone this sector belongs to
+	uint16_t MoreFlags;		// [RH] Internal sector flags
+	uint32_t Flags;		// Sector flags
 
 	// [RH] Action specials for sectors. Like Skull Tag, but more
 	// flexible in a Bloody way. SecActTarget forms a list of actors
 	// joined by their tracer fields. When a potential sector action
 	// occurs, SecActTarget's TriggerAction method is called.
-	TObjPtr<ASectorAction> SecActTarget;
+	TObjPtr<AActor*> SecActTarget;
 
 	// [RH] The portal or skybox to render for this sector.
 	unsigned Portals[2];
@@ -1069,7 +1038,7 @@ struct side_t
 		double xScale;
 		double yScale;
 		FTextureID texture;
-		TObjPtr<DInterpolation> interpolation;
+		TObjPtr<DInterpolation*> interpolation;
 		//int Light;
 	};
 
@@ -1077,16 +1046,16 @@ struct side_t
 	DBaseDecal*	AttachedDecals;	// [RH] Decals bound to the wall
 	part		textures[3];
 	line_t		*linedef;
-	//DWORD		linenum;
-	DWORD		LeftSide, RightSide;	// [RH] Group walls into loops
-	WORD		TexelLength;
-	SWORD		Light;
-	BYTE		Flags;
-	int			Index;		// needed to access custom UDMF fields which are stored in loading order.
+	//uint32_t		linenum;
+	uint32_t		LeftSide, RightSide;	// [RH] Group walls into loops
+	uint16_t		TexelLength;
+	int16_t		Light;
+	uint8_t		Flags;
+	int			UDMFIndex;		// needed to access custom UDMF fields which are stored in loading order.
 
 	int GetLightLevel (bool foggy, int baselight, bool is3dlight=false, int *pfakecontrast_usedbygzdoom=NULL) const;
 
-	void SetLight(SWORD l)
+	void SetLight(int16_t l)
 	{
 		Light = l;
 	}
@@ -1189,6 +1158,8 @@ struct side_t
 
 	vertex_t *V1() const;
 	vertex_t *V2() const;
+
+	int Index() const;
 };
 
 struct line_t
@@ -1248,7 +1219,19 @@ struct line_t
 	{
 		return portalindex >= linePortals.Size() ? 0 : linePortals[portalindex].mAlign;
 	}
+
+	int Index() const;
 };
+
+inline vertex_t *side_t::V1() const
+{
+	return this == linedef->sidedef[0] ? linedef->v1 : linedef->v2;
+}
+
+inline vertex_t *side_t::V2() const
+{
+	return this == linedef->sidedef[0] ? linedef->v2 : linedef->v1;
+}
 
 // phares 3/14/98
 //
@@ -1280,7 +1263,7 @@ struct msecnode_t
 // use the same memory layout as msecnode_t so both can be used from the same freelist.
 struct portnode_t
 {
-	FLinePortal			*m_portal;	// a portal containing this object
+	FLinePortal			*m_sector;	// a portal containing this object (no, this isn't a sector, but if we want to use templates it needs the same variable names as msecnode_t.)
 	AActor				*m_thing;	// this object
 	struct portnode_t	*m_tprev;	// prev msecnode_t for this thing
 	struct portnode_t	*m_tnext;	// next msecnode_t for this thing
@@ -1306,13 +1289,15 @@ struct seg_t
 	// Sector references. Could be retrieved from linedef, too.
 	sector_t*		frontsector;
 	sector_t*		backsector;		// NULL for one-sided lines
+
+	seg_t*			PartnerSeg;
+	subsector_t*	Subsector;
+
+	float			sidefrac;		// relative position of seg's ending vertex on owning sidedef
 };
 
-struct glsegextra_t
-{
-	DWORD		 PartnerSeg;
-	subsector_t *Subsector;
-};
+extern seg_t *segs;
+
 
 //
 // A SubSector.
@@ -1335,7 +1320,7 @@ struct subsector_t
 	FMiniBSP	*BSP;
 	seg_t		*firstline;
 	sector_t	*render_sector;
-	DWORD		numlines;
+	uint32_t		numlines;
 	int			flags;
 
 	void BuildPolyBSP();
@@ -1386,14 +1371,14 @@ struct FMiniBSP
 // OTHER TYPES
 //
 
-typedef BYTE lighttable_t;	// This could be wider for >8 bit display.
+typedef uint8_t lighttable_t;	// This could be wider for >8 bit display.
 
 // This encapsulates the fields of vissprite_t that can be altered by AlterWeaponSprite
 struct visstyle_t
 {
-	lighttable_t	*colormap;
+	bool			Invert;
 	float			Alpha;
-	FRenderStyle	RenderStyle;
+	ERenderStyle	RenderStyle;
 };
 
 

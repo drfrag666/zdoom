@@ -104,6 +104,11 @@ DoomEdNums
   9823 = none
   9824 = none
   9825 = none
+  9830 = none
+  9831 = none
+  9832 = none
+  9833 = none
+  9834 = none
   9982 = SecActEyesAboveC
   9983 = SecActEyesBelowC
   9988 = CustomSprite

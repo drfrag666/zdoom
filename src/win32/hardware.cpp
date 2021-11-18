@@ -94,15 +94,15 @@ void I_InitGraphics ()
 		// not receive a WM_ACTIVATEAPP message, so both games think they
 		// are the active app. Huh?
 	}
-
 	val.Bool = !!Args->CheckParm ("-devparm");
 	ticker.SetGenericRepDefault (val, CVAR_Bool);
 	Video = new Win32Video (0);
+
 	if (Video == NULL)
 		I_FatalError ("Failed to initialize display");
-
+	
 	atterm (I_ShutdownGraphics);
-
+	
 	Video->SetWindowedScale (vid_winscale);
 }
 
@@ -148,12 +148,12 @@ DFrameBuffer *I_SetMode (int &width, int &height, DFrameBuffer *old)
 	}
 	DFrameBuffer *res = Video->CreateFrameBuffer (width, height, fs, old);
 
-	/* Right now, CreateFrameBuffer cannot return NULL
+	//* Right now, CreateFrameBuffer cannot return NULL
 	if (res == NULL)
 	{
 		I_FatalError ("Mode %dx%d is unavailable\n", width, height);
 	}
-	*/
+	//*/
 	return res;
 }
 
@@ -255,7 +255,8 @@ void I_SaveWindowedPos ()
 		return;
 	}
 	// Make sure we only save the window position if it's not fullscreen.
-	if ((GetWindowLong (Window, GWL_STYLE) & WS_OVERLAPPEDWINDOW) == WS_OVERLAPPEDWINDOW)
+	static const int WINDOW_STYLE = WS_OVERLAPPEDWINDOW;
+	if ((GetWindowLong (Window, GWL_STYLE) & WINDOW_STYLE) == WINDOW_STYLE)
 	{
 		RECT wrect;
 
@@ -312,7 +313,7 @@ void I_RestoreWindowedPos ()
 
 extern int NewWidth, NewHeight, NewBits, DisplayBits;
 
-CUSTOM_CVAR (Bool, fullscreen, true, CVAR_ARCHIVE|CVAR_GLOBALCONFIG|CVAR_NOINITCALL)
+CUSTOM_CVAR (Bool, fullscreen, false, CVAR_ARCHIVE|CVAR_GLOBALCONFIG|CVAR_NOINITCALL)
 {
 	NewWidth = screen->GetWidth();
 	NewHeight = screen->GetHeight();

@@ -275,10 +275,11 @@ public:
 	friend class D3DTex;
 };
 
-
+class FxAddSub;
 // Texture manager
 class FTextureManager
 {
+	friend class FxAddSub;	// needs access to do a bounds check on the texture ID.
 public:
 	FTextureManager ();
 	~FTextureManager ();
@@ -484,12 +485,12 @@ public:
 	FTexture *GetRedirect(bool wantwarped);
 
 	DWORD GenTime;
+	float Speed;
+	int WidthOffsetMultiplier, HeightOffsetMultiplier;  // [mxd]
 protected:
 	FTexture *SourcePic;
 	BYTE *Pixels;
 	Span **Spans;
-	float Speed;
-	int WidthOffsetMultiplier, HeightOffsetMultiplier;  // [mxd]
 
 	virtual void MakeTexture (DWORD time);
 	int NextPo2 (int v); // [mxd]

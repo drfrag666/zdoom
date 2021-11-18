@@ -4,6 +4,8 @@
 **
 **---------------------------------------------------------------------------
 ** Copyright 1998-2009 Randy Heit
+** Copyright (C) 2007-2012 Skulltag Development Team
+** Copyright (C) 2007-2016 Zandronum Development Team
 ** All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -17,6 +19,15 @@
 **    documentation and/or other materials provided with the distribution.
 ** 3. The name of the author may not be used to endorse or promote products
 **    derived from this software without specific prior written permission.
+** 4. Redistributions in any form must be accompanied by information on how to
+**    obtain complete source code for the software and any accompanying software
+**    that uses the software. The source code must either be included in the
+**    distribution or be available for no more than the cost of distribution plus
+**    a nominal fee, and must be freely redistributable under reasonable
+**    conditions. For an executable file, complete source code means the source
+**    code for all modules it contains. It does not include source code for
+**    modules or files that typically accompany the major components of the
+**    operating system on which the executable file runs.
 **
 ** THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
 ** IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -1159,6 +1170,7 @@ BOOL CALLBACK IWADBoxCallback(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 			newlabel.Format(GAMESIG " %s: %s", GetVersionString(), label);
 			SetWindowText(hDlg, newlabel.GetChars());
 		}
+
 		// Populate the list with all the IWADs found
 		ctrl = GetDlgItem(hDlg, IDC_IWADLIST);
 		for (i = 0; i < NumWads; i++)
@@ -1456,11 +1468,11 @@ static HCURSOR CreateBitmapCursor(int xhot, int yhot, HBITMAP and_mask, HBITMAP 
 {
 	ICONINFO iconinfo =
 	{
-		FALSE,			// fIcon
+		FALSE,		// fIcon
 		(DWORD)xhot,	// xHotspot
 		(DWORD)yhot,	// yHotspot
-		and_mask,		// hbmMask
-		color_mask		// hbmColor
+		and_mask,	// hbmMask
+		color_mask	// hbmColor
 	};
 	HCURSOR cursor = CreateIconIndirect(&iconinfo);
 

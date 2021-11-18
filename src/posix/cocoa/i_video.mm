@@ -45,6 +45,7 @@
 #include "hardware.h"
 #include "i_system.h"
 #include "m_argv.h"
+#include "m_png.h"
 #include "r_renderer.h"
 #include "r_swrenderer.h"
 #include "st_console.h"
@@ -58,6 +59,19 @@
 
 #undef Class
 
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 1070
+
+@implementation NSView(Compatibility)
+
+- (NSRect)convertRectToBacking:(NSRect)aRect
+{
+	return [self convertRect:aRect toView:[self superview]];
+}
+
+@end
+
+#endif // prior to 10.7
 
 @implementation NSWindow(ExitAppOnClose)
 
@@ -187,7 +201,6 @@ namespace
 @end
 
 
-
 // ---------------------------------------------------------------------------
 
 
@@ -235,6 +248,9 @@ private:
 };
 
 
+// ---------------------------------------------------------------------------
+
+
 class CocoaFrameBuffer : public DFrameBuffer
 {
 public:
@@ -265,7 +281,7 @@ private:
 	PalEntry m_palette[256];
 	bool     m_needPaletteUpdate;
 
-	BYTE     m_gammaTable[3][256];
+	uint8_t     m_gammaTable[3][256];
 	float    m_gamma;
 	bool     m_needGammaUpdate;
 
@@ -542,7 +558,8 @@ DFrameBuffer* CocoaVideo::CreateFrameBuffer(const int width, const int height, c
 		delete old;
 	}
 
-	CocoaFrameBuffer* fb = new CocoaFrameBuffer(width, height, fullscreen);
+	CocoaFrameBuffer* fb = new CocoaFrameBuffer(width, height, bgra, fullscreen);
+
 	fb->SetFlash(flashColor, flashAmount);
 
 	SetMode(width, height, fullscreen, vid_hidpi);
@@ -759,6 +776,9 @@ CocoaVideo* CocoaVideo::GetInstance()
 {
 	return static_cast<CocoaVideo*>(Video);
 }
+
+
+// ---------------------------------------------------------------------------
 
 
 CocoaFrameBuffer::CocoaFrameBuffer(int width, int height, bool fullscreen)
@@ -1021,6 +1041,9 @@ ADD_STAT(blit)
 IVideo* Video;
 
 
+// ---------------------------------------------------------------------------
+
+
 void I_ShutdownGraphics()
 {
 	if (NULL != screen)
@@ -1128,6 +1151,9 @@ void I_ClosestResolution(int *width, int *height, int bits)
 }
 
 
+// ---------------------------------------------------------------------------
+
+
 EXTERN_CVAR(Int, vid_maxfps);
 EXTERN_CVAR(Bool, cl_capfps);
 
@@ -1164,6 +1190,9 @@ CUSTOM_CVAR(Bool, vid_hidpi, true, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
 		self = 0;
 	}
 }
+
+
+// ---------------------------------------------------------------------------
 
 
 CCMD(vid_listmodes)
@@ -1227,7 +1256,7 @@ bool I_SetCursor(FTexture* cursorpic)
 
 		// Load bitmap data to representation
 
-		BYTE* buffer = [bitmapImageRep bitmapData];
+		uint8_t* buffer = [bitmapImageRep bitmapData];
 		memset(buffer, 0, imagePitch * imageHeight);
 
 		FBitmap bitmap(buffer, imagePitch, imageWidth, imageHeight);
@@ -1239,7 +1268,7 @@ bool I_SetCursor(FTexture* cursorpic)
 		{
 			const size_t offset = i * 4;
 
-			const BYTE temp    = buffer[offset    ];
+			const uint8_t temp    = buffer[offset    ];
 			buffer[offset    ] = buffer[offset + 2];
 			buffer[offset + 2] = temp;
 		}

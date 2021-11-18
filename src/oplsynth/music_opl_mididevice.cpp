@@ -252,7 +252,7 @@ void OPLMIDIDevice::HandleEvent(int status, int parm1, int parm2)
 //
 //==========================================================================
 
-void OPLMIDIDevice::HandleLongEvent(const BYTE *data, int len)
+void OPLMIDIDevice::HandleLongEvent(const uint8_t *data, int len)
 {
 }
 
@@ -289,7 +289,7 @@ FString OPLMIDIDevice::GetStats()
 {
 	FString out;
 	char star[3] = { TEXTCOLOR_ESCAPE, 'A', '*' };
-	for (uint i = 0; i < io->OPLchannels; ++i)
+	for (uint32_t i = 0; i < io->OPLchannels; ++i)
 	{
 		if (channels[i].flags & CH_FREE)
 		{

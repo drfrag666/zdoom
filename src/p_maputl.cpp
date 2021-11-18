@@ -44,6 +44,7 @@
 #include "r_state.h"
 #include "templates.h"
 #include "po_man.h"
+#include "g_levellocals.h"
 
 sector_t *P_PointInSectorBuggy(double x, double y);
 int P_VanillaPointOnDivlineSide(double x, double y, const divline_t* line);
@@ -330,7 +331,7 @@ bool AActor::FixMapthingPos()
 
 		for (list = blockmaplump + blockmap[blocky*bmapwidth + blockx] + 1; *list != -1; ++list)
 		{
-			line_t *ldef = &lines[*list];
+			line_t *ldef = &level.lines[*list];
 
 			if (ldef->frontsector == ldef->backsector)
 			{ // Skip two-sided lines inside a single sector
@@ -367,10 +368,10 @@ bool AActor::FixMapthingPos()
 
 			if (distance < radius)
 			{
-				DPrintf(DMSG_NOTIFY, "%s at (%f,%f) lies on %s line %td, distance = %f\n",
+				DPrintf(DMSG_NOTIFY, "%s at (%f,%f) lies on %s line %d, distance = %f\n",
 					this->GetClass()->TypeName.GetChars(), X(), Y(),
 					ldef->Delta().X == 0 ? "vertical" : ldef->Delta().Y == 0 ? "horizontal" : "diagonal",
-					ldef - lines, distance);
+					ldef->Index(), distance);
 				DAngle ang = ldef->Delta().Angle();
 				if (ldef->backsector != NULL && ldef->backsector == secstart)
 				{
@@ -395,7 +396,8 @@ bool AActor::FixMapthingPos()
 DEFINE_ACTION_FUNCTION(AActor, UnlinkFromWorld)
 {
 	PARAM_SELF_PROLOGUE(AActor);
-	self->UnlinkFromWorld(nullptr); // fixme
+	PARAM_POINTER_DEF(ctx, FLinkContext);
+	self->UnlinkFromWorld(ctx); // fixme
 	return 0;
 }
 
@@ -529,7 +531,8 @@ void AActor::LinkToWorld(FLinkContext *ctx, bool spawningmapthing, sector_t *sec
 DEFINE_ACTION_FUNCTION(AActor, LinkToWorld)
 {
 	PARAM_SELF_PROLOGUE(AActor);
-	self->LinkToWorld(nullptr);	// fixme
+	PARAM_POINTER_DEF(ctx, FLinkContext);
+	self->LinkToWorld(ctx);
 	return 0;
 }
 
@@ -709,7 +712,7 @@ line_t *FBlockLinesIterator::Next()
 		{
 			while (*list != -1)
 			{
-				line_t *ld = &lines[*list];
+				line_t *ld = &level.lines[*list];
 
 				list++;
 				if (ld->validcount != validcount)
@@ -892,6 +895,74 @@ void FMultiBlockLinesIterator::Reset()
 	portalflags = 0;
 	startIteratorForGroup(basegroup);
 }
+
+//===========================================================================
+//
+// and the scriptable version
+//
+//===========================================================================
+
+class DBlockLinesIterator : public DObject, public FMultiBlockLinesIterator
+{
+	DECLARE_ABSTRACT_CLASS(DBlockLinesIterator, DObject);
+	FPortalGroupArray check;
+
+public:
+	FMultiBlockLinesIterator::CheckResult cres;
+
+	bool Next()
+	{
+		return FMultiBlockLinesIterator::Next(&cres);
+	}
+
+	DBlockLinesIterator(AActor *actor, double checkradius)
+		: FMultiBlockLinesIterator(check, actor, checkradius)
+	{
+		cres.line = nullptr;
+		cres.Position.Zero();
+		cres.portalflags = 0;
+	}
+
+	DBlockLinesIterator(double x, double y, double z, double height, double radius, sector_t *sec)
+		:FMultiBlockLinesIterator(check, x, y, z, height, radius, sec)
+	{
+		cres.line = nullptr;
+		cres.Position.Zero();
+		cres.portalflags = 0;
+	}
+};
+
+IMPLEMENT_CLASS(DBlockLinesIterator, true, false);
+
+DEFINE_ACTION_FUNCTION(DBlockLinesIterator, Create)
+{
+	PARAM_PROLOGUE;
+	PARAM_OBJECT_NOT_NULL(origin, AActor);
+	PARAM_FLOAT_DEF(radius);
+	ACTION_RETURN_OBJECT(new DBlockLinesIterator(origin, radius));
+}
+
+DEFINE_ACTION_FUNCTION(DBlockLinesIterator, CreateFromPos)
+{
+	PARAM_PROLOGUE;
+	PARAM_FLOAT(x);
+	PARAM_FLOAT(y);
+	PARAM_FLOAT(z);
+	PARAM_FLOAT(h);
+	PARAM_FLOAT(radius);
+	PARAM_POINTER_DEF(sec, sector_t);
+	ACTION_RETURN_OBJECT(new DBlockLinesIterator(x, y, z, h, radius, sec));
+}
+
+DEFINE_ACTION_FUNCTION(DBlockLinesIterator, Next)
+{
+	PARAM_SELF_PROLOGUE(DBlockLinesIterator);
+	ACTION_RETURN_BOOL(self->Next());
+}
+
+DEFINE_FIELD_NAMED(DBlockLinesIterator, cres.line, curline);
+DEFINE_FIELD_NAMED(DBlockLinesIterator, cres.Position, position);
+DEFINE_FIELD_NAMED(DBlockLinesIterator, cres.portalflags, portalflags);
 
 //===========================================================================
 //
@@ -1172,18 +1243,17 @@ void FMultiBlockThingsIterator::Reset()
 
 class DBlockThingsIterator : public DObject, public FMultiBlockThingsIterator
 {
-	DECLARE_CLASS(DBlockThingsIterator, DObject);
+	DECLARE_ABSTRACT_CLASS(DBlockThingsIterator, DObject);
 	FPortalGroupArray check;
 public:
 	FMultiBlockThingsIterator::CheckResult cres;
 
-public:
 	bool Next()
 	{
 		return FMultiBlockThingsIterator::Next(&cres);
 	}
 
-	DBlockThingsIterator(AActor *origin = nullptr, double checkradius = -1, bool ignorerestricted = false)
+	DBlockThingsIterator(AActor *origin, double checkradius = -1, bool ignorerestricted = false)
 		: FMultiBlockThingsIterator(check, origin, checkradius, ignorerestricted)
 	{
 		cres.thing = nullptr;
@@ -1200,7 +1270,7 @@ public:
 	}
 };
 
-IMPLEMENT_CLASS(DBlockThingsIterator, false, false);
+IMPLEMENT_CLASS(DBlockThingsIterator, true, false);
 
 DEFINE_ACTION_FUNCTION(DBlockThingsIterator, Create)
 {
@@ -2049,6 +2119,6 @@ sector_t *P_PointInSectorBuggy(double x, double y)
 		node = (node_t *)node->children[R_PointOnSideSlow(x, y, node)];
 	} while (!((size_t)node & 1));
 
-	subsector_t *ssec = (subsector_t *)((BYTE *)node - 1);
+	subsector_t *ssec = (subsector_t *)((uint8_t *)node - 1);
 	return ssec->sector;
 }

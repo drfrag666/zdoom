@@ -68,6 +68,7 @@
 #include "f_wipe.h"
 #include "sbar.h"
 #include "win32iface.h"
+#include "win32swiface.h"
 #include "doomstat.h"
 #include "v_palette.h"
 #include "w_wad.h"
@@ -877,7 +878,7 @@ bool D3DFB::CreateVertexes ()
 	{
 		return false;
 	}
-	if (FAILED(D3DDevice->CreateIndexBuffer(sizeof(WORD)*NUM_INDEXES,
+	if (FAILED(D3DDevice->CreateIndexBuffer(sizeof(uint16_t)*NUM_INDEXES,
 		D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &IndexBuffer, NULL)))
 	{
 		return false;
@@ -1208,10 +1209,7 @@ void D3DFB::Flip()
 		}
 	}
 	// Limiting the frame rate is as simple as waiting for the timer to signal this event.
-	if (FPSLimitEvent != NULL)
-	{
-		WaitForSingleObject(FPSLimitEvent, 1000);
-	}
+	I_FPSLimit();
 	D3DDevice->Present(NULL, NULL, NULL, NULL);
 	InScene = false;
 
@@ -1706,7 +1704,6 @@ void D3DFB::NewRefreshRate ()
 
 void D3DFB::Blank ()
 {
-	// Only used by movie player, which isn't working with D3D9 yet.
 }
 
 void D3DFB::SetBlendingRect(int x1, int y1, int x2, int y2)
@@ -3092,7 +3089,7 @@ void D3DFB::FlatFill(int left, int top, int right, int bottom, FTexture *src, bo
 
 void D3DFB::FillSimplePoly(FTexture *texture, FVector2 *points, int npoints,
 	double originx, double originy, double scalex, double scaley,
-	DAngle rotation, FDynamicColormap *colormap, int lightlevel, int bottomclip)
+	DAngle rotation, FDynamicColormap *colormap, PalEntry flatcolor, int lightlevel, int bottomclip)
 {
 	// Use an equation similar to player sprites to determine shade
 	double fadelevel = clamp((LIGHT2SHADE(lightlevel)/65536. - 12) / NUMCOLORMAPS, 0.0, 1.0);
@@ -3113,7 +3110,7 @@ void D3DFB::FillSimplePoly(FTexture *texture, FVector2 *points, int npoints,
 	}
 	if (In2D < 2)
 	{
-		Super::FillSimplePoly(texture, points, npoints, originx, originy, scalex, scaley, rotation, colormap, lightlevel, bottomclip);
+		Super::FillSimplePoly(texture, points, npoints, originx, originy, scalex, scaley, rotation, colormap, flatcolor, lightlevel, bottomclip);
 		return;
 	}
 	if (!InScene)

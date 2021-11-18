@@ -643,15 +643,25 @@ bool FConfigFile::ReadConfig (void *file)
 		{
 			continue;
 		}
-		// Remove white space at end of line
-		endpt = start + strlen (start) - 1;
-		while (endpt > start && *endpt <= ' ')
+		// Do not process tail of long line
+		const bool longline = (READBUFFERSIZE - 1) == strlen(readbuf) && '\n' != readbuf[READBUFFERSIZE - 2];
+		if (longline)
 		{
-			endpt--;
+			endpt = start + READBUFFERSIZE - 2;
 		}
-		endpt[1] = 0;
-		if (endpt <= start)
-			continue;	// Nothing here
+		else
+		{
+			// Remove white space at end of line
+			endpt = start + strlen (start) - 1;
+			while (endpt > start && *endpt <= ' ')
+			{
+				endpt--;
+			}
+			// Remove line feed '\n' character
+			endpt[1] = 0;
+			if (endpt <= start)
+				continue;	// Nothing here
+		}
 
 		if (*start == '[')
 		{ // Section header
@@ -686,6 +696,31 @@ bool FConfigFile::ReadConfig (void *file)
 				if (whiteprobe[0] == '<' && whiteprobe[1] == '<' && whiteprobe[2] == '<' && whiteprobe[3] != '\0')
 				{
 					ReadMultiLineValue (file, section, start, whiteprobe + 3);
+				}
+				else if (longline)
+				{
+					const FString key = start;
+					FString value = whiteprobe;
+					
+					while (ReadLine (readbuf, READBUFFERSIZE, file) != NULL)
+					{
+						const size_t endpos = (0 == readbuf[0]) ? 0 : (strlen(readbuf) - 1);
+						const bool endofline = '\n' == readbuf[endpos];
+						
+						if (endofline)
+						{
+							readbuf[endpos] = 0;
+						}
+						
+						value += readbuf;
+						
+						if (endofline)
+						{
+							break;
+						}
+					}
+					
+					NewConfigEntry (section, key.GetChars(), value.GetChars());
 				}
 				else
 				{
@@ -836,7 +871,7 @@ const char *FConfigFile::GenerateEndTag(const char *value)
 
 		for (int i = 0; i < 5; ++i)
 		{
-			//DWORD three_bytes = (rand_bytes[i*3] << 16) | (rand_bytes[i*3+1] << 8) | (rand_bytes[i*3+2]); // ???
+			//uint32_t three_bytes = (rand_bytes[i*3] << 16) | (rand_bytes[i*3+1] << 8) | (rand_bytes[i*3+2]); // ???
 			EndTag[4+i*4  ] = Base64Table[rand_bytes[i*3] >> 2];
 			EndTag[4+i*4+1] = Base64Table[((rand_bytes[i*3] & 3) << 4) | (rand_bytes[i*3+1] >> 4)];
 			EndTag[4+i*4+2] = Base64Table[((rand_bytes[i*3+1] & 15) << 2) | (rand_bytes[i*3+2] >> 6)];

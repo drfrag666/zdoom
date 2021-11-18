@@ -62,6 +62,12 @@
 #include "r_sky.h"
 #include "r_renderer.h"
 #include "serializer.h"
+#include "g_levellocals.h"
+#include "events.h"
+
+static TStaticArray<sector_t>	loadsectors;
+static TStaticArray<line_t>		loadlines;
+static TStaticArray<side_t>		loadsides;
 
 
 //==========================================================================
@@ -181,6 +187,8 @@ FSerializer &Serialize(FSerializer &arc, const char *key, sector_t::splane &p, s
 			("texture", p.Texture, def->Texture)
 			("texz", p.TexZ, def->TexZ)
 			("alpha", p.alpha, def->alpha)
+			("glowcolor", p.GlowColor, def->GlowColor)
+			("glowheight", p.GlowHeight, def->GlowHeight)
 			.EndObject();
 	}
 	return arc;
@@ -268,6 +276,8 @@ FSerializer &Serialize(FSerializer &arc, const char *key, sector_t &p, sector_t 
 			("linked_floor", p.e->Linked.Floor.Sectors)
 			("linked_ceiling", p.e->Linked.Ceiling.Sectors)
 			("colormap", p.ColorMap, def->ColorMap)
+			.Array("specialcolors", p.SpecialColors, def->SpecialColors, 5, true)
+			("gravity", p.gravity, def->gravity)
 			.Terrain("floorterrain", p.terrainnum[0], &def->terrainnum[0])
 			.Terrain("ceilingterrain", p.terrainnum[1], &def->terrainnum[1])
 			("scrolls", scroll, nul)
@@ -277,7 +287,7 @@ FSerializer &Serialize(FSerializer &arc, const char *key, sector_t &p, sector_t 
 		{
 			if (level.Scrolls.Size() == 0)
 			{
-				level.Scrolls.Resize(numsectors);
+				level.Scrolls.Resize(level.sectors.Size());
 				memset(&level.Scrolls[0], 0, sizeof(level.Scrolls[0])*level.Scrolls.Size());
 				level.Scrolls[p.sectornum] = scroll;
 			}
@@ -319,7 +329,7 @@ void RecalculateDrawnSubsectors()
 
 FSerializer &Serialize(FSerializer &arc, const char *key, subsector_t *&ss, subsector_t **)
 {
-	BYTE by;
+	uint8_t by;
 	const char *str;
 
 	if (arc.isWriting())
@@ -349,6 +359,7 @@ FSerializer &Serialize(FSerializer &arc, const char *key, subsector_t *&ss, subs
 			str = &encoded[0];
 			if (arc.BeginArray(key))
 			{
+				auto numvertexes = level.vertexes.Size();
 				arc(nullptr, numvertexes)
 					(nullptr, numsubsectors)
 					.StringPtr(nullptr, str)
@@ -367,7 +378,7 @@ FSerializer &Serialize(FSerializer &arc, const char *key, subsector_t *&ss, subs
 				.StringPtr(nullptr, str)
 				.EndArray();
 
-			if (num_verts == numvertexes && num_subs == numsubsectors && hasglnodes)
+			if (num_verts == (int)level.vertexes.Size() && num_subs == numsubsectors && hasglnodes)
 			{
 				success = true;
 				int sub = 0;
@@ -513,7 +524,7 @@ void P_SerializeSounds(FSerializer &arc)
 	S_SerializeSounds(arc);
 	DSeqNode::SerializeSequences (arc);
 	const char *name = NULL;
-	BYTE order;
+	uint8_t order;
 
 	if (arc.isWriting())
 	{
@@ -678,8 +689,8 @@ static void ReadMultiplePlayers(FSerializer &arc, int numPlayers, int numPlayers
 	int i, j;
 	const char **nametemp = new const char *[numPlayers];
 	player_t *playertemp = new player_t[numPlayers];
-	BYTE *tempPlayerUsed = new BYTE[numPlayers];
-	BYTE playerUsed[MAXPLAYERS];
+	uint8_t *tempPlayerUsed = new uint8_t[numPlayers];
+	uint8_t playerUsed[MAXPLAYERS];
 
 	for (i = 0; i < numPlayers; ++i)
 	{
@@ -819,9 +830,12 @@ void CopyPlayer(player_t *dst, player_t *src, const char *name)
 	else
 	{
 		dst->userinfo.TransferFrom(uibackup);
+		// The player class must come from the save, so that the menu reflects the currently playing one.
+		dst->userinfo.PlayerClassChanged(src->mo->GetClass()->DisplayName); 
 	}
+
 	// Validate the skin
-	dst->userinfo.SkinNumChanged(R_FindSkin(skins[dst->userinfo.GetSkin()].name, dst->CurrentPlayerClass));
+	dst->userinfo.SkinNumChanged(R_FindSkin(Skins[dst->userinfo.GetSkin()].Name, dst->CurrentPlayerClass));
 
 	// Make sure the player pawn points to the proper player struct.
 	if (dst->mo != nullptr)
@@ -892,11 +906,11 @@ void G_SerializeLevel(FSerializer &arc, bool hubload)
 		// prevent bad things from happening by doing a check on the size of level arrays and the map's entire checksum.
 		// The old code happily tried to load savegames with any mismatch here, often causing meaningless errors
 		// deep down in the deserializer or just a crash if the few insufficient safeguards were not triggered.
-		BYTE chk[16] = { 0 };
+		uint8_t chk[16] = { 0 };
 		arc.Array("checksum", chk, 16);
-		if (arc.GetSize("linedefs") != (unsigned)numlines ||
-			arc.GetSize("sidedefs") != (unsigned)numsides ||
-			arc.GetSize("sectors") != (unsigned)numsectors ||
+		if (arc.GetSize("linedefs") != level.lines.Size() ||
+			arc.GetSize("sidedefs") != level.sides.Size() ||
+			arc.GetSize("sectors") != level.sectors.Size() ||
 			arc.GetSize("polyobjs") != (unsigned)po_NumPolyobjs ||
 			memcmp(chk, level.md5, 16))
 		{
@@ -948,14 +962,16 @@ void G_SerializeLevel(FSerializer &arc, bool hubload)
 
 	FBehavior::StaticSerializeModuleStates(arc);
 	// The order here is important: First world state, then portal state, then thinkers, and last polyobjects.
-	arc.Array("linedefs", lines, &loadlines[0], numlines);
-	arc.Array("sidedefs", sides, &loadsides[0], numsides);
-	arc.Array("sectors", sectors, &loadsectors[0], numsectors);
+	arc.Array("linedefs", &level.lines[0], &loadlines[0], level.lines.Size());
+	arc.Array("sidedefs", &level.sides[0], &loadsides[0], level.sides.Size());
+	arc.Array("sectors", &level.sectors[0], &loadsectors[0], level.sectors.Size());
 	arc("zones", Zones);
 	arc("lineportals", linePortals);
-	arc("sectorportals", sectorPortals);
+	arc("sectorportals", level.sectorPortals);
 	if (arc.isReading()) P_CollectLinkedPortals();
 
+	// [ZZ] serialize events
+	E_SerializeEvents(arc);
 	DThinker::SerializeThinkers(arc, !hubload);
 	arc.Array("polyobjs", polyobjs, po_NumPolyobjs);
 	arc("subsectors", subsectors);
@@ -968,9 +984,9 @@ void G_SerializeLevel(FSerializer &arc, bool hubload)
 
 	if (arc.isReading())
 	{
-		for (int i = 0; i < numsectors; i++)
+		for (auto &sec : level.sectors)
 		{
-			P_Recalculate3DFloors(&sectors[i]);
+			P_Recalculate3DFloors(&sec);
 		}
 		for (int i = 0; i < MAXPLAYERS; ++i)
 		{
@@ -984,4 +1000,18 @@ void G_SerializeLevel(FSerializer &arc, bool hubload)
 
 }
 
+// Create a backup of the map data so the savegame code can toss out all fields that haven't changed in order to reduce processing time and file size.
 
+void P_BackupMapData()
+{
+	loadsectors = level.sectors;
+	loadlines = level.lines;
+	loadsides = level.sides;
+}
+
+void P_FreeMapDataBackup()
+{
+	loadsectors.Clear();
+	loadlines.Clear();
+	loadsides.Clear();
+}

@@ -41,6 +41,8 @@
 #endif
 
 #include <limits.h>
+#include <tuple>
+#include <algorithm>
 #include "tarray.h"
 #include "name.h"
 #include "zstring.h"
@@ -53,16 +55,6 @@ typedef TMap<int, PClassActor *> FClassMap;
 #define NOVTABLE __declspec(novtable)
 #else
 #define NOVTABLE
-#endif
-
-#if defined(__clang__)
-#if defined(__has_feature) && __has_feature(address_sanitizer)
-#define NO_SANITIZE __attribute__((no_sanitize("address")))
-#else
-#define NO_SANITIZE
-#endif
-#else
-#define NO_SANITIZE
 #endif
 
 #if defined(__GNUC__)
@@ -131,36 +123,33 @@ struct PalEntry
 	PalEntry &operator= (uint32 other) { d = other; return *this; }
 	PalEntry InverseColor() const { PalEntry nc; nc.a = a; nc.r = 255 - r; nc.g = 255 - g; nc.b = 255 - b; return nc; }
 #ifdef __BIG_ENDIAN__
-	PalEntry (BYTE ir, BYTE ig, BYTE ib) : a(0), r(ir), g(ig), b(ib) {}
-	PalEntry (BYTE ia, BYTE ir, BYTE ig, BYTE ib) : a(ia), r(ir), g(ig), b(ib) {}
+	PalEntry (uint8_t ir, uint8_t ig, uint8_t ib) : a(0), r(ir), g(ig), b(ib) {}
+	PalEntry (uint8_t ia, uint8_t ir, uint8_t ig, uint8_t ib) : a(ia), r(ir), g(ig), b(ib) {}
 	union
 	{
 		struct
 		{
-			BYTE a,r,g,b;
+			uint8_t a,r,g,b;
 		};
 		uint32 d;
 	};
 #else
-	PalEntry (BYTE ir, BYTE ig, BYTE ib) : b(ib), g(ig), r(ir), a(0) {}
-	PalEntry (BYTE ia, BYTE ir, BYTE ig, BYTE ib) : b(ib), g(ig), r(ir), a(ia) {}
+	PalEntry (uint8_t ir, uint8_t ig, uint8_t ib) : b(ib), g(ig), r(ir), a(0) {}
+	PalEntry (uint8_t ia, uint8_t ir, uint8_t ig, uint8_t ib) : b(ib), g(ig), r(ir), a(ia) {}
 	union
 	{
 		struct
 		{
-			BYTE b,g,r,a;
+			uint8_t b,g,r,a;
 		};
 		uint32 d;
 	};
 #endif
 };
 
-class PClassInventory;
-
 class FTextureID
 {
 	friend class FTextureManager;
-	friend FTextureID GetHUDIcon(PClassInventory *cls);
 	friend void R_InitSpriteDefs();
 
 public:
@@ -185,6 +174,45 @@ protected:
 private:
 	int texnum;
 };
+
+// This is for the script interface which needs to do casts from int to texture.
+class FSetTextureID : public FTextureID
+{
+public:
+	FSetTextureID(int v) : FTextureID(v) {}
+};
+
+
+struct VersionInfo
+{
+	uint16_t major;
+	uint16_t minor;
+	uint32_t revision;
+
+	bool operator <=(const VersionInfo &o) const
+	{
+		return o.major > this->major || (o.major == this->major && o.minor > this->minor) || (o.major == this->major && o.minor == this->minor && o.revision >= this->revision);
+	}
+	bool operator >=(const VersionInfo &o) const
+	{
+		return o.major < this->major || (o.major == this->major && o.minor < this->minor) || (o.major == this->major && o.minor == this->minor && o.revision <= this->revision);
+	}
+	bool operator > (const VersionInfo &o) const
+	{
+		return o.major < this->major || (o.major == this->major && o.minor < this->minor) || (o.major == this->major && o.minor == this->minor && o.revision < this->revision);
+	}
+	bool operator < (const VersionInfo &o) const
+	{
+		return o.major > this->major || (o.major == this->major && o.minor > this->minor) || (o.major == this->major && o.minor == this->minor && o.revision > this->revision);
+	}
+	void operator=(const char *string);
+};
+
+// Cannot be a constructor because Lemon would puke on it.
+inline VersionInfo MakeVersion(unsigned int ma, unsigned int mi, unsigned int re = 0)
+{
+	return{ (uint16_t)ma, (uint16_t)mi, (uint32_t)re };
+}
 
 
 

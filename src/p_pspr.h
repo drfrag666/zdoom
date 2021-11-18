@@ -69,11 +69,13 @@ public:
 	int			GetID()		const { return ID; }
 	int			GetSprite()	const { return Sprite; }
 	int			GetFrame()	const { return Frame; }
+	int			GetTics()   const {	return Tics; }
 	FState*		GetState()	const { return State; }
 	DPSprite*	GetNext()	      { return Next; }
 	AActor*		GetCaller()	      { return Caller; }
 	void		SetCaller(AActor *newcaller) { Caller = newcaller; }
 	void		ResetInterpolation() { oldx = x; oldy = y; }
+	void OnDestroy() override;
 
 	double x, y;
 	double oldx, oldy;
@@ -86,11 +88,10 @@ private:
 
 	void Serialize(FSerializer &arc);
 	void Tick();
-	void Destroy() override;
 
 public:	// must be public to be able to generate the field export tables. Grrr...
-	TObjPtr<AActor> Caller;
-	TObjPtr<DPSprite> Next;
+	TObjPtr<AActor*> Caller;
+	TObjPtr<DPSprite*> Next;
 	player_t *Owner;
 	FState *State;
 	int Sprite;

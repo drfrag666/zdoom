@@ -48,6 +48,7 @@
 #include "doomtype.h"
 #include "f_wipe.h"
 #include "win32iface.h"
+#include "win32swiface.h"
 #include "templates.h"
 #include "m_random.h"
 
@@ -468,7 +469,7 @@ bool D3DFB::Wiper_Melt::Run(int ticks, D3DFB *fb)
 
 					BufferedTris *quad = &fb->QuadExtra[fb->QuadBatchPos];
 					FBVERTEX *vert = &fb->VertexData[fb->VertexPos];
-					WORD *index = &fb->IndexData[fb->IndexPos];
+					uint16_t *index = &fb->IndexData[fb->IndexPos];
 
 					quad->Group1 = 0;
 					quad->Flags = BQF_DisableAlphaTest;

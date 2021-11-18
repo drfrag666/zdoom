@@ -184,6 +184,10 @@ typedef NSInteger NSApplicationActivationPolicy;
 - (void)setWantsBestResolutionOpenGLSurface:(BOOL)flag;
 @end
 
+@interface NSView(Compatibility)
+- (NSRect)convertRectToBacking:(NSRect)aRect;
+@end
+
 @interface NSScreen(HiDPIStubs)
 - (NSRect)convertRectToBacking:(NSRect)aRect;
 @end

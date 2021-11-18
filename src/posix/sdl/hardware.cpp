@@ -36,6 +36,7 @@
 #include <signal.h>
 #include <time.h>
 
+#include "version.h"
 #include "hardware.h"
 #include "i_video.h"
 #include "i_system.h"
@@ -84,8 +85,9 @@ void I_InitGraphics ()
 
 	val.Bool = !!Args->CheckParm ("-devparm");
 	ticker.SetGenericRepDefault (val, CVAR_Bool);
-
+	
 	Video = new SDLVideo (0);
+	
 	if (Video == NULL)
 		I_FatalError ("Failed to initialize display");
 

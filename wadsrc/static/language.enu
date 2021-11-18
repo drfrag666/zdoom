@@ -1417,6 +1417,9 @@ TXT_KILLED_ORACLE = "You've Killed The Oracle!";
 TXT_KILLED_MACIL = "You Killed Macil!";
 TXT_KILLED_LOREMASTER = "You've Killed the Loremaster!";
 
+TXT_YOUFOOL = "You Fool!  You've set off the alarm.";
+TXT_YOUREDEAD = "You're dead!  You set off the alarm.";
+
 // Strife pickup messages
 
 TXT_METALARMOR = "You picked up the Metal Armor.";
@@ -1562,6 +1565,23 @@ TXT_GOAWAY			= "Go away!";
 TXT_COMM0			= "Incoming Message";
 TXT_COMM1			= "Incoming Message from BlackBird";
 
+
+AMMO_CLIP			= "Bullets";
+AMMO_SHELLS			= "Shotgun Shells";
+AMMO_ROCKETS		= "Rockets";
+AMMO_CELLS			= "Energy Cells";
+AMMO_GOLDWAND		= "Wand Crystals";
+AMMO_CROSSBOW		= "Ethereal Arrows";
+AMMO_BLASTER		= "Claw Orbs";
+AMMO_MACE			= "Mace Spheres";
+AMMO_SKULLROD		= "Hellstaff Runes";
+AMMO_PHOENIXROD		= "Flame Orbs";
+AMMO_MANA1			= "Blue Mana";
+AMMO_MANA2			= "Green Mana";
+$ifgame(chex) AMMO_CLIP = "Mini Zorch Charge";
+$ifgame(chex) AMMO_SHELLS = "Large Zorcher Charge";
+$ifgame(chex) AMMO_ROCKETS = "Propulsor Charge";
+$ifgame(chex) AMMO_CELLS = "Phasing Zorcher Charge";
 
 // Menu Strings
 
@@ -1756,6 +1776,7 @@ MOUSEMNU_LOOKSTRAFE			= "Lookstrafe";
 
 JOYMNU_CONFIG				= "CONFIGURE CONTROLLER";
 JOYMNU_OPTIONS				= "CONTROLLER OPTIONS";
+JOYMNU_NOMENU				= "Block controller input in menu";
 
 // Player Setup Menu
 MNU_PLAYERSETUP		= "PLAYER SETUP";
@@ -1779,7 +1800,6 @@ DSPLYMNU_SCREENSIZE				= "Screen size";
 DSPLYMNU_BRIGHTNESS				= "Brightness";
 DSPLYMNU_VSYNC					= "Vertical Sync";
 DSPLYMNU_CAPFPS					= "Rendering Interpolation";
-DSPLYMNU_COLUMNMETHOD			= "Column render mode";
 DSPLYMNU_WIPETYPE				= "Screen wipe style";
 DSPLYMNU_SHOWENDOOM				= "Show ENDOOM screen";
 DSPLYMNU_BLOODFADE				= "Blood Flash Intensity";
@@ -1876,7 +1896,7 @@ MISCMNU_DEHLOAD					= "Load *.deh/*.bex lumps";
 MISCMNU_CACHENODES				= "Cache nodes";
 MISCMNU_CACHETIME				= "Time threshold for node caching";
 MISCMNU_CLEARNODECACHE			= "Clear node cache";
-
+MISCMNU_INTERSCROLL				= "Allow skipping of intermission scrollers";
 // Automap Options
 AUTOMAPMNU_TITLE				= "AUTOMAP OPTIONS";
 AUTOMAPMNU_COLORSET				= "Map color set";
@@ -2168,9 +2188,29 @@ NETMNU_HOSTOPTIONS				= "Host options";
 NETMNU_EXTRATICS				= "Extra Tics";
 NETMNU_TICBALANCE				= "Latency balancing";
 
+// Joystick menu
+
+JOYMNU_ENABLE = "Enable controller support";
+JOYMNU_DINPUT = "Enable DirectInput controllers";
+JOYMNU_XINPUT = "Enable XInput controllers";
+JOYMNU_PS2 = "Enable raw PlayStation 2 adapters";
+JOYMNU_NOCON = "No controllers detected";
+JOYMNU_CONFIG = "Configure controllers:";
+JOYMNU_DISABLED1 = "Controller support must be";
+JOYMNU_DISABLED2 = "enabled to detect any";
+JOYMNU_INVALID = "Invalid controller specified for menu";
+JOYMNU_OVRSENS = "Overall sensitivity";
+JOYMNU_AXIS = "Axis Configuration";
+JOYMNU_INVERT = "Invert";
+JOYMNU_DEADZONE = "Dead zone";
+JOYMNU_NOAXES = "No configurable axes";
+
 // Option Values
 OPTVAL_OFF					= "Off";
 OPTVAL_ON					= "On";
+OPTVAL_LOW					= "Low";
+OPTVAL_MEDIUM				= "Medium";
+OPTVAL_HIGH					= "High";
 OPTVAL_MALE					= "Male";
 OPTVAL_FEMALE				= "Female";
 OPTVAL_OTHER				= "Other";
@@ -2246,6 +2286,7 @@ OPTVAL_FRONT				= "Front";
 OPTVAL_ANIMATED				= "Animated";
 OPTVAL_ROTATED				= "Rotated";
 OPTVAL_MAPDEFINEDCOLORSONLY = "Map defined colors only";
+OPTVAL_NODOORS				= "All except doors";
 OPTVAL_DOUBLE				= "Double";
 OPTVAL_TRIPLE				= "Triple";
 OPTVAL_QUADRUPLE			= "Quadruple";
