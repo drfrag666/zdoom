@@ -1229,7 +1229,7 @@ void D3DFB::Flip()
 	{
 		RECT box;
 		GetClientRect(Window, &box);
-		if (box.right > 0 && box.bottom > 0 && (Width != box.right || Height != box.bottom))
+		if (box.right > 0 && box.bottom > 0 && (Width != box.right && Height != box.bottom))
 		{
 			Resize(box.right, box.bottom);
 
