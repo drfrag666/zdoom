@@ -8,7 +8,9 @@ endif()
 
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_7ZIP_PPMD_SUPPPORT" )
 
-set( LZMA_FILES
+find_package(Threads)
+
+add_library( lzma
 	C/7zArcIn.c
 	C/7zBuf.c
 	C/7zCrc.c
@@ -22,17 +24,13 @@ set( LZMA_FILES
 	C/CpuArch.c
 	C/Delta.c
 	C/LzFind.c
+	C/LzFindMt.c
+	C/LzFindOpt.c
 	C/Lzma2Dec.c
 	C/LzmaDec.c
 	C/LzmaEnc.c
 	C/Ppmd7.c
-	C/Ppmd7Dec.c )
-
-if( WIN32 )
-	set( LZMA_FILES ${LZMA_FILES} C/LzFindMt.c C/LzFindOpt.c C/Threads.c )
-else()
-	set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_7ZIP_ST" )
-endif()
-
-add_library( lzma ${LZMA_FILES} )
-target_link_libraries( lzma )
+	C/Ppmd7Dec.c
+	C/Threads.c
+)
+target_link_libraries( lzma Threads::Threads )
