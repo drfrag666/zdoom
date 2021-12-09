@@ -499,7 +499,7 @@ void Win32Video::AddLowResModes()
 		nextmode = mode->next;
 		if (mode->realheight == mode->height &&
 			mode->doubling == 0 &&
-			mode->height >= 200*4 &&
+			mode->height >= 180*4 &&
 			mode->height <= 480*4 &&
 			mode->width >= 320*4 &&
 			mode->width <= 640*4)
@@ -537,7 +537,7 @@ void Win32Video::AddMode (int x, int y, int bits, int y2, int doubling)
 	if ((x & 1) != 0 ||
 		y > MAXHEIGHT ||
 		x > MAXWIDTH ||
-		y < 200 ||
+		y < (doubling > 1 ? 180 : 200) ||
 		x < 320)
 	{
 		return;
