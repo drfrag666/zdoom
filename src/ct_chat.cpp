@@ -46,6 +46,8 @@ EXTERN_CVAR (Bool, sb_cooperative_enable)
 EXTERN_CVAR (Bool, sb_deathmatch_enable)
 EXTERN_CVAR (Bool, sb_teamdeathmatch_enable)
 
+CVAR (Bool, chat_self, true, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
+
 int active_con_scaletext();
 
 // Public data
@@ -501,7 +503,7 @@ static bool DoSubstitution (FString &out, const char *in)
 
 CCMD (messagemode)
 {
-	if (menuactive == MENU_Off)
+	if (menuactive == MENU_Off && (multiplayer || chat_self))
 	{
 		chatmodeon = 1;
 		C_HideConsole ();
@@ -523,7 +525,7 @@ CCMD (say)
 
 CCMD (messagemode2)
 {
-	if (menuactive == MENU_Off)
+	if (menuactive == MENU_Off && (multiplayer || chat_self))
 	{
 		chatmodeon = 2;
 		C_HideConsole ();
