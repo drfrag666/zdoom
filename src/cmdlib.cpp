@@ -485,45 +485,16 @@ const char *myasctime ()
 void DoCreatePath(const char *fn)
 {
 	char drive[_MAX_DRIVE];
-	char dir[_MAX_DIR];
-	_splitpath_s(fn, drive, sizeof drive, dir, sizeof dir, nullptr, 0, nullptr, 0);
-
-	if ('\0' == *dir)
-	{
-		// Root/current/parent directory always exists
-		return;
-	}
-
 	char path[PATH_MAX];
-	_makepath_s(path, sizeof path, drive, dir, nullptr, nullptr);
+	char p[PATH_MAX];
+	int i;
 
-	if ('\0' == *path)
-	{
-		// No need to process empty relative path
-		return;
-	}
-
-	// Remove trailing path separator(s)
-	for (size_t i = strlen(path); 0 != i; --i)
-	{
-		char& lastchar = path[i - 1];
-
-		if ('/' == lastchar || '\\' == lastchar)
-		{
-			lastchar = '\0';
-		}
-		else
-		{
-			break;
-		}
-	}
-
-	// Create all directories for given path
-	if ('\0' != *path)
-	{
-		DoCreatePath(path);
-		_mkdir(path);
-	}
+	_splitpath(fn,drive,path,NULL,NULL);
+	_makepath(p,drive,path,NULL,NULL);
+	i=(int)strlen(p);
+	if (p[i-1]=='/' || p[i-1]=='\\') p[i-1]=0;
+	if (*path) DoCreatePath(p);
+	_mkdir(p);
 }
 
 void CreatePath(const char *fn)
