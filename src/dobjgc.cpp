@@ -56,6 +56,8 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+#include <limits>
+
 #include "dobject.h"
 #include "templates.h"
 #include "b_bot.h"
