@@ -530,7 +530,6 @@ int DThinker::TickThinkers (FThinkerList *list, FThinkerList *dest)
 			ThinkCount++;
 			node->CallTick();
 			node->ObjectFlags &= ~OF_JustSpawned;
-			GC::CheckGC();
 		}
 		node = NextToThink;
 	}
